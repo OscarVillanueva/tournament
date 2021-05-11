@@ -96,6 +96,13 @@ const Home = () => {
 
         </div>
 
+        <button
+          className = "text-white"
+          onClick = { () => console.log("Modal o algo para seleccionar los torneos activos") }
+        >
+          Ir a torneo
+        </button>
+
       </div>
     
     </Layout>

@@ -1,7 +1,14 @@
 import React,{ FC } from 'react'
 import Head from 'next/head'
+import { useRouter } from "next/router";
+
+// Componentes
+import Navigation from './Navigation'
  
 const Layout: FC = ({ children }) => {
+
+    const router = useRouter()
+
     return ( 
         
         <>
@@ -12,6 +19,11 @@ const Layout: FC = ({ children }) => {
 
             </Head>
 
+            { router.pathname !== "/" && (
+
+                <Navigation />
+
+            )}
 
             <div className="bg-green-800 min-h-screen">
                 <div className="container mx-auto">
