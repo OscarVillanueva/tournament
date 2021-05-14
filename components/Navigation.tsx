@@ -8,15 +8,24 @@ export interface NavigationProps {
 const Navigation: FC<NavigationProps> = () => {
     return ( 
 
-        <header className = "bg-green-800 flex justify-between p-4">
+        <header className = "bg-green-800 flex flex-col md:flex-row md:justify-between p-4">
 
             <Link href = "/">
 
-                <a className = "text-white uppercase text-bold text-lg">
+                <a 
+                    className = "text-white uppercase text-bold text-lg hover:text-gray-200 text-right md:text-left"
+                >
                     Regresar
                 </a>
 
             </Link>
+
+            <button
+                className = "bg-yellow-700 transition delay-75 duration-300 ease-in-out delay hover:bg-yellow-800 text-gray-200 py-2 px-4 rounded text-center my-4 md:mb-0"
+                onClick = { () => console.log("Agregando") }
+            >
+                Agregar parcipante
+            </button>
 
             <button
                 className = "bg-red-700 transition delay-75 duration-300 ease-in-out delay hover:bg-red-800 text-gray-200 py-2 px-4 rounded text-center"
@@ -24,6 +33,7 @@ const Navigation: FC<NavigationProps> = () => {
             >
                 Cancelar torneo
             </button>
+
 
         </header>
 

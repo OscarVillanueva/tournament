@@ -21,7 +21,11 @@ const Layout: FC = ({ children }) => {
 
             { router.pathname !== "/" && (
 
-                <Navigation />
+                <div className="bg-green-800">
+                    <div className="container mx-auto">
+                        <Navigation />
+                    </div>
+                </div>
 
             )}
 
