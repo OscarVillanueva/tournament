@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { FC } from 'react'
 
 export interface MatchProps {
     name: String,
     score: Number
 }
  
-const Match: React.SFC<MatchProps> = ({ name, score }) => {
+const Match: FC<MatchProps> = ({ name, score }) => {
     return ( 
         <div className="flex justify-between items-center mb-2">
 

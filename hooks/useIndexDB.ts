@@ -1,17 +1,18 @@
 import React, { useEffect } from 'react';
 
-export interface useIndexDBProps {
-    databaseName: string, 
-    indexes: Index[]
-}
-
 interface Index {
     index: string,
     keyPath: string,
     options: object
 }
 
-const useIndexDb = ( config: useIndexDBProps ) => {
+export interface useIndexDBProps {
+    databaseName: string, 
+    indexes: Index[]
+}
+
+
+const useIndexDb = ({ databaseName, indexes }: useIndexDBProps ) : { saveIntoDatabase: Function }  => {
 
     let DB: any
     
@@ -19,7 +20,7 @@ const useIndexDb = ( config: useIndexDBProps ) => {
         
         if ( typeof window !== "undefined" ) {
 
-            const createDB = window.indexedDB.open( config.databaseName, 1 )
+            const createDB = window.indexedDB.open( databaseName, 1 )
 
             createDB.onerror = () => console.log("Hubo un error al intentar crear la DB")
 
@@ -29,14 +30,13 @@ const useIndexDb = ( config: useIndexDBProps ) => {
 
                 let db = e.target.result
 
-                let objectStore = db.createObjectStore( config.databaseName, {
+                let objectStore = db.createObjectStore( databaseName, {
                     kaypath: "key",
                     autoIncrement: true                    
                 })
 
-                config.indexes.forEach(index => {
+                indexes.forEach(index => {
                     
-                    console.log(`index`, index)
                     objectStore.createIndex( index.index, index.keyPath, index.options)
 
                 })
@@ -49,6 +49,24 @@ const useIndexDb = ( config: useIndexDBProps ) => {
         }
 
     }, [])
+
+    const saveIntoDatabase = ( item: object, sucess: Function, complete: Function, error: Function ) => {
+        
+        let transaction = DB.transaction( [ databaseName ], "readwrite" )
+        let objectStore = transaction.objectStore( databaseName )
+
+        let request = objectStore.add( item )
+
+        request.onsuccess = sucess
+
+        transaction.oncomplete = complete
+        transaction.onerror = error
+
+    }
+
+    return {
+        saveIntoDatabase
+    }
 
 }
  

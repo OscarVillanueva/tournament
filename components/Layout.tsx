@@ -4,8 +4,12 @@ import { useRouter } from "next/router";
 
 // Componentes
 import Navigation from './Navigation'
+
+export interface LayoutProps {
+    addAction?: Function
+}
  
-const Layout: FC = ({ children }) => {
+const Layout: FC<LayoutProps> = ({ addAction, children }) => {
 
     const router = useRouter()
 
@@ -23,7 +27,9 @@ const Layout: FC = ({ children }) => {
 
                 <div className="bg-green-800">
                     <div className="container mx-auto">
-                        <Navigation />
+                        <Navigation 
+                            addAction = { addAction }
+                        />
                     </div>
                 </div>
 

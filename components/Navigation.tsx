@@ -3,10 +3,10 @@ import Link from 'next/link'
 import Swal from 'sweetalert2'
 
 export interface NavigationProps {
-    
+    addAction?: Function
 }
  
-const Navigation: FC<NavigationProps> = () => {
+const Navigation: FC<NavigationProps> = ({ addAction }) => {
 
     const addToTournament = async () => {
 
@@ -18,7 +18,17 @@ const Navigation: FC<NavigationProps> = () => {
             confirmButtonColor: "#d97706"
         })
 
-        if( result.isConfirmed ) console.log("Agregando . . .", result.value)
+        if( result.isConfirmed ) {
+            
+            const participant = {
+                name: result.value,
+                victories: 0,
+                score: 0
+            }
+
+            addAction( participant )
+
+        }
 
     }
 

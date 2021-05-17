@@ -1,4 +1,4 @@
-import React,{ FC } from 'react'
+import React,{ FC, useEffect } from 'react'
 
 // Componentes
 import Layout from '../components/Layout'
@@ -10,7 +10,7 @@ import useIndexDB from '../hooks/useIndexDB'
 
 const World: FC = () => {
 
-    const db = useIndexDB({
+    const { saveIntoDatabase } = useIndexDB({
         databaseName: "World",
         indexes: [
             {
@@ -25,9 +25,16 @@ const World: FC = () => {
             }
         ]
     })
+    
+    const success = () => console.log("Se ha agregado correctamente")
+    const error = () => console.log("error")
+    const complete = () => console.log("Se ha completado la transacción")
+    
 
     return (
-        <Layout>
+        <Layout
+            addAction = { (item: object) => saveIntoDatabase( item, success, complete, error ) }
+        >
 
             <h1
                 className = "text-center text-white text-3xl md:pt-8"
