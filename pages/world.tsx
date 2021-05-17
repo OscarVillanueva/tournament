@@ -1,87 +1,69 @@
 import React,{ FC } from 'react'
+
+// Componentes
 import Layout from '../components/Layout'
-import styled from 'styled-components'
+import Matches from '../components/Matches'
+import Ranking from '../components/Ranking'
 
-const Row = styled.tr`
-    border-bottom: 1px solid#d97706;
-`
+// Hook
+import useIndexDB from '../hooks/useIndexDB'
 
-export interface WorldProps {
-    
-}
- 
-const World: FC<WorldProps> = () => {
+const World: FC = () => {
+
+    const db = useIndexDB({
+        databaseName: "World",
+        indexes: [
+            {
+                index: "matches",
+                keyPath: "matches",
+                options: { unique: false }
+            },
+            {
+                index: "Ranking",
+                keyPath: "matches",
+                options: { unique: false }
+            }
+        ]
+    })
+
     return (
         <Layout>
 
             <h1
-                className = "text-center text-white text-3xl pt-8"
+                className = "text-center text-white text-3xl md:pt-8"
             >
                 Todos contra todos
             </h1>
 
-            <div className="md:grid md:grid-cols-2 mt-8 gap-8">
+            <div className="md:grid md:grid-cols-2 mt-8 gap-8 w-11/12 mx-auto md:w-full">
 
                 <div>
-                    <h3 className = "text-center text-white text-lg">
+                    <h3 className = "text-center text-white text-lg mb-4">
                         Rol
                     </h3>
+
+                    <Matches
+                        round = "Ronda 1"
+                        participants = {{
+                            home: {
+                                name: "S. Bolelli / M. Gonzales",
+                                score: 0
+                            },
+                            visitor: {
+                                name: "M. Purcel / L. Saville",
+                                score: 0
+                            }
+                        }}
+                    />
+
                 </div>
                 
                 <div>
-                    <h3 className = "text-center text-white text-lg">
+                    <h3 className = "text-center text-white text-lg mt-8 md:mt-0">
                         Ranking
                     </h3>
 
-                    <table className = "w-full mt-4 border border-yellow-600">
-
-                        <thead className = "bg-yellow-600">
-
-                            <tr>
-                                <th className = "text-center text-white">
-                                    Posición
-                                </th>
-
-                                <th className = "text-center text-white">
-                                    Participante
-                                </th>
-
-                                <th className = "text-center text-white">
-                                    Victorias
-                                </th>
-
-                                <th className = "text-center text-white">
-                                    Puntos
-                                </th>
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            <Row>
-
-                                <td className = "text-center text-white">1</td>
-                                <td className = "text-center text-white">Alguien</td>
-                                <td className = "text-center text-white">10</td>
-                                <td className = "text-center text-white">8</td>
-
-                            </Row>
-                            
-                            <Row>
-
-                                <td className = "text-center text-white">2</td>
-                                <td className = "text-center text-white">Otro alguien</td>
-                                <td className = "text-center text-white">9</td>
-                                <td className = "text-center text-white">8</td>
-
-                            </Row>
-
-
-                        </tbody>
-
-                    </table>
-
+                    <Ranking />
                 </div>
 
             </div>
