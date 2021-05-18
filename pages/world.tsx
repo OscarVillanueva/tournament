@@ -1,39 +1,72 @@
-import React,{ FC, useEffect } from 'react'
+import React,{ FC, useContext, useEffect, useState } from 'react'
+import Swal from 'sweetalert2'
+
+// Models
+import { Player } from "../models/index";
 
 // Componentes
 import Layout from '../components/Layout'
 import Matches from '../components/Matches'
 import Ranking from '../components/Ranking'
 
-// Hook
-import useIndexDB from '../hooks/useIndexDB'
+// Context
+import WorldContext from '../context/world/WorldContext'
 
 const World: FC = () => {
 
-    const { saveIntoDatabase } = useIndexDB({
-        databaseName: "World",
-        indexes: [
-            {
-                index: "matches",
-                keyPath: "matches",
-                options: { unique: false }
-            },
-            {
-                index: "Ranking",
-                keyPath: "matches",
-                options: { unique: false }
-            }
-        ]
-    })
-    
-    const success = () => console.log("Se ha agregado correctamente")
-    const error = () => console.log("error")
-    const complete = () => console.log("Se ha completado la transacción")
-    
+    const [addingPlayer, setAddingPlayer] = useState(false)
+
+    const { 
+        ranking, 
+        openDB, 
+        operationError, 
+        tryToOpenDatabase, 
+        fetchRankig, 
+        addPlayer 
+    } = useContext( WorldContext )
+
+    useEffect(() => {
+        
+        if( !openDB ) tryToOpenDatabase()
+
+    }, [openDB])
+
+    useEffect(() => {
+        
+        if( openDB && ranking.length === 0 ) fetchRankig()
+
+    }, [ranking, openDB])
+
+    useEffect(() => {
+        
+        if( addingPlayer )
+            error()
+
+    }, [operationError])
+
+    const error = () => {
+
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Ocurrio un error intenta más tarde',
+        })
+
+        setAddingPlayer( false )
+        
+    }
+
+    const addPlayerToTournamet = (player: Player) => {
+        
+        setAddingPlayer( true )
+
+        addPlayer( player )
+
+    }
 
     return (
         <Layout
-            addAction = { (item: object) => saveIntoDatabase( item, success, complete, error ) }
+            addAction = { (item: Player) => addPlayerToTournamet( item ) }
         >
 
             <h1
@@ -70,7 +103,9 @@ const World: FC = () => {
                         Ranking
                     </h3>
 
-                    <Ranking />
+                    <Ranking 
+                        ranking = { ranking }
+                    />
                 </div>
 
             </div>

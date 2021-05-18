@@ -1,9 +1,17 @@
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface Index {
     index: string,
     keyPath: string,
     options: object
+}
+
+interface Actions {
+    openDB: boolean,
+    saveIntoDatabase: ( item: object, sucess: Function, complete: Function, error: Function ) => void,
+    retriveData: ( sucess: Function ) => void,
+    deleteItem: ( item: any, error: Function, sucess: Function) => void,
+    tryToOpenDatabase: () => void
 }
 
 export interface useIndexDBProps {
@@ -12,11 +20,18 @@ export interface useIndexDBProps {
 }
 
 
-const useIndexDb = ({ databaseName, indexes }: useIndexDBProps ) : { saveIntoDatabase: Function }  => {
+const useIndexDb = ({ databaseName, indexes }: useIndexDBProps ) : Actions  => {
 
-    let DB: any
+    const [DB, setDB] = useState(null)
+    const [openDB, setOpenDB] = useState(false)
     
     useEffect(() => {
+        
+        tryToOpenDatabase()
+
+    }, [])
+
+    const tryToOpenDatabase = () => {
         
         if ( typeof window !== "undefined" ) {
 
@@ -24,7 +39,12 @@ const useIndexDb = ({ databaseName, indexes }: useIndexDBProps ) : { saveIntoDat
 
             createDB.onerror = () => console.log("Hubo un error al intentar crear la DB")
 
-            createDB.onsuccess = () => DB = createDB.result
+            createDB.onsuccess = () => {
+
+                setDB( createDB.result )
+                setOpenDB( true )
+
+            }
 
             createDB.onupgradeneeded = e => {
 
@@ -42,13 +62,13 @@ const useIndexDb = ({ databaseName, indexes }: useIndexDBProps ) : { saveIntoDat
                 })
                 
 
-                console.log("BD Creada Y Lista")
+                setOpenDB( true )
 
             }        
             
         }
 
-    }, [])
+    }
 
     const saveIntoDatabase = ( item: object, sucess: Function, complete: Function, error: Function ) => {
         
@@ -64,8 +84,37 @@ const useIndexDb = ({ databaseName, indexes }: useIndexDBProps ) : { saveIntoDat
 
     }
 
+    const retriveData = ( sucess: Function) => {
+        
+        if( !DB ) return null
+
+        let objectStore = DB.transaction( databaseName ).objectStore( databaseName )
+
+        objectStore.openCursor().onsuccess = sucess
+
+    }
+
+    const deleteItem = ( item: any, error: Function, sucess: Function) => {
+
+        if( !DB ) return null
+
+        const transaction = DB.transaction([ databaseName ], "readwrite")
+                                .objectStore( databaseName )
+                                .delete( item )
+
+        // TODO: Events no trigerred
+        transaction.onsucess = () => console.log("Eliminado")
+        transaction.oncomplete = () => console.log("completo")
+        transaction.onerror = () => console.log("Error")
+
+    }
+
     return {
-        saveIntoDatabase
+        openDB,
+        saveIntoDatabase,
+        retriveData,
+        deleteItem,
+        tryToOpenDatabase
     }
 
 }

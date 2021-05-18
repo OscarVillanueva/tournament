@@ -1,15 +1,47 @@
-import React, { FC } from 'react'
+import React, { FC, useContext} from 'react'
 import styled from 'styled-components'
+
+// Models
+import { Player } from "../models/index";
+
+// Context
+import WorldContext from '../context/world/WorldContext'
+import Swal from 'sweetalert2';
 
 const Row = styled.tr`
     border-bottom: 1px solid#d97706;
+
+    td {
+
+        padding: 0.6rem;
+
+    }
 `
 
 export interface RankingProps {
-    
+    ranking: Player[]
 }
- 
-const Ranking: FC<RankingProps> = () => {
+
+const Ranking: FC<RankingProps> = ({ ranking }) => {
+
+    const { deletePlayer } = useContext( WorldContext )
+
+    const handleDeletePlayer = async (player: Player) => {
+        
+        const response = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, ¡Borrar!'
+        })
+
+        if( response.isConfirmed ) deletePlayer( player )
+
+    }
+
     return ( 
         <table className = "w-full mt-4 border border-yellow-600 rounded">
 
@@ -31,31 +63,46 @@ const Ranking: FC<RankingProps> = () => {
                     <th className = "text-center text-white">
                         Puntos
                     </th>
+
+                    <th className = "text-center text-white">
+                        Eliminar
+                    </th>
                 </tr>
 
             </thead>
 
             <tbody>
 
-                <Row>
+                {ranking.map((player, index) => (
+                    
+                    <Row
+                        key = { index }
+                    >
 
-                    <td className = "text-center text-white">1</td>
-                    <td className = "text-center text-white">Kirino / Flaco</td>
-                    <td className = "text-center text-white">10</td>
-                    <td className = "text-center text-white">8</td>
+                        <td className = "text-center text-white">{ index + 1 }</td>
+                        <td className = "text-center text-white">{ player.name }</td>
+                        <td className = "text-center text-white">{ player.victories }</td>
+                        <td className = "text-center text-white">{ player.score }</td>
+                        <td className = "text-center text-red-400">
 
-                </Row>
+                            <button
+                                onClick = { () => handleDeletePlayer( player ) }
+                            >
+
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+
+                            </button>
+
+                        </td>
+
+
+                    </Row>
+
+                ))}
+
                 
-                <Row>
-
-                    <td className = "text-center text-white">2</td>
-                    <td className = "text-center text-white">Javi / Niño</td>
-                    <td className = "text-center text-white">9</td>
-                    <td className = "text-center text-white">8</td>
-
-                </Row>
-
-
             </tbody>
 
         </table>

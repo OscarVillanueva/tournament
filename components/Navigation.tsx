@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import Link from 'next/link'
 import Swal from 'sweetalert2'
+import { Player } from '../models'
 
 export interface NavigationProps {
     addAction?: Function
@@ -20,7 +21,7 @@ const Navigation: FC<NavigationProps> = ({ addAction }) => {
 
         if( result.isConfirmed ) {
             
-            const participant = {
+            const participant: Player = {
                 name: result.value,
                 victories: 0,
                 score: 0
