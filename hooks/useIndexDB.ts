@@ -11,7 +11,8 @@ interface Actions {
     saveIntoDatabase: ( item: object, sucess: Function, complete: Function, error: Function ) => void,
     retriveData: ( sucess: Function ) => void,
     deleteItem: ( item: any, error: Function, sucess: Function) => void,
-    tryToOpenDatabase: () => void
+    tryToOpenDatabase: () => void,
+    updateItem: (item: any, update: any, success: Function, error: Function) => void
 }
 
 export interface useIndexDBProps {
@@ -103,9 +104,30 @@ const useIndexDb = ({ databaseName, indexes }: useIndexDBProps ) : Actions  => {
                                 .delete( item )
 
         // TODO: Events no trigerred
-        transaction.onsucess = () => console.log("Eliminado")
-        transaction.oncomplete = () => console.log("completo")
-        transaction.onerror = () => console.log("Error")
+        transaction.onsucess = console.log("me llame sucess")
+        transaction.oncomplete = console.log("me llame complete")
+        transaction.onerror = console.log("me llame error")
+        transaction.onblocked = console.log("bloqueada")
+
+    }
+
+    const updateItem = (item: any, update: any, success: Function, error: Function) => {
+        
+        const objectStore = DB.transaction( [ databaseName ], "readwrite" ).objectStore( databaseName )
+        const request = objectStore.get( item )
+
+        request.onerror = error
+
+        request.onsucess = () => {
+
+            let data = request.result
+            data = update
+
+            const requestUpdate = objectStore.put( data )
+            requestUpdate.onsucess = success
+            requestUpdate.onerror = error
+
+        }
 
     }
 
@@ -114,7 +136,8 @@ const useIndexDb = ({ databaseName, indexes }: useIndexDBProps ) : Actions  => {
         saveIntoDatabase,
         retriveData,
         deleteItem,
-        tryToOpenDatabase
+        tryToOpenDatabase,
+        updateItem
     }
 
 }

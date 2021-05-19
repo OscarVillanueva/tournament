@@ -35,7 +35,7 @@ const Navigation: FC<NavigationProps> = ({ addAction }) => {
 
     return ( 
 
-        <header className = "bg-green-800 flex flex-col md:flex-row md:justify-between p-4">
+        <header className = "bg-green-800 flex flex-col md:flex-row md:justify-between p-4 items-center">
 
             <Link href = "/">
 
@@ -48,7 +48,7 @@ const Navigation: FC<NavigationProps> = ({ addAction }) => {
             </Link>
 
             <button
-                className = "bg-yellow-700 transition delay-75 duration-300 ease-in-out delay hover:bg-yellow-800 text-gray-200 py-2 px-4 rounded text-center my-4 md:mb-0"
+                className = "bg-yellow-700 transition delay-75 duration-300 ease-in-out delay hover:bg-yellow-800 text-gray-200 py-2 px-4 rounded text-center my-4 md:my-0 md:mb-0"
                 onClick = { addToTournament }
             >
                 Agregar parcipante

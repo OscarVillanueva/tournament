@@ -18,24 +18,22 @@ const World: FC = () => {
 
     const { 
         ranking, 
-        openDB, 
         operationError, 
-        tryToOpenDatabase, 
         fetchRankig, 
         addPlayer 
     } = useContext( WorldContext )
 
+    // useEffect(() => {
+        
+    //     if( !openDB ) tryToOpenDatabase()
+
+    // }, [openDB])
+
     useEffect(() => {
         
-        if( !openDB ) tryToOpenDatabase()
+        if( ranking.length === 0 ) fetchRankig()
 
-    }, [openDB])
-
-    useEffect(() => {
-        
-        if( openDB && ranking.length === 0 ) fetchRankig()
-
-    }, [ranking, openDB])
+    }, [])
 
     useEffect(() => {
         
@@ -82,7 +80,7 @@ const World: FC = () => {
                         Rol
                     </h3>
 
-                    <Matches
+                    {/* <Matches
                         round = "Ronda 1"
                         participants = {{
                             home: {
@@ -94,7 +92,7 @@ const World: FC = () => {
                                 score: 0
                             }
                         }}
-                    />
+                    /> */}
 
                 </div>
                 

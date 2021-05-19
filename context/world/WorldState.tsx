@@ -1,4 +1,5 @@
 import React, { FC, useReducer } from 'react';
+import shortid from 'shortid'
 import WorldReducer from './WorldReducer'
 import WorldContext from './WorldContext'
 
@@ -6,88 +7,106 @@ import WorldContext from './WorldContext'
 import { Player } from "../../models";
 
 // hooks
-import useIndexDB from '../../hooks/useIndexDB'
+import useLocalStorage from '../../hooks/useLocalStorage'
 
 // Tipos - actions
-import { ADD_PLAYER, DELETE_PLAYER, FETCH_PLAYERS, SET_ERROR } from '../../types';
+import { ADD_PLAYER, DELETE_PLAYER, FETCH_PLAYERS, UPDATE_PLAYER } from '../../types';
 
 const WorldState: FC = ({ children }) => {
 
     const initialState = {
         ranking: [],
-        operationError: false
+        operationError: false,
     }
 
-    const { openDB, saveIntoDatabase, retriveData, tryToOpenDatabase, deleteItem } = useIndexDB({
-        databaseName: "World",
-        indexes: [
-            {
-                index: "matches",
-                keyPath: "matches",
-                options: { unique: false }
-            },
-            {
-                index: "Ranking",
-                keyPath: "matches",
-                options: { unique: false }
-            }
-        ]
-    })
+    const { getFromStorage, setIntoStorage } = useLocalStorage( "world" )
 
     const [ state, dispatch ] = useReducer( WorldReducer, initialState )
 
     const fetchRankig = () => {
         
-        let data = []
+        try {
+            
+            const data = getFromStorage( "ranking" )
+            
+            dispatch({
+                type: FETCH_PLAYERS,
+                payload: data ? data : []
+            })  
 
-        if( openDB ) 
-            retriveData((e: EventTarget ) => {
+        } catch (error) {
 
-                let cursor = e.target.result
-
-                if( cursor ) {
-                    
-                    data.push({
-                        id: cursor.key,
-                        ...cursor.value
-                    })
-                    
-                    cursor.continue()
-                }
-                else {
-
-                    dispatch({
-                        type: FETCH_PLAYERS,
-                        payload: data
-                    })
-
-                }
-
-            })
+            console.log(error)
+            
+        }
 
     }
 
     const addPlayer = (player: Player) => {
 
-        saveIntoDatabase( 
-            player, 
-            () => dispatch({ type: ADD_PLAYER, payload: player }), 
-            null, 
-            () => dispatch({ type: SET_ERROR, payload: true })
-        )
+        try {
+            
+            const newPlayer = {
+                ...player,
+                id: shortid.generate()
+            }
+
+            const data = [ ...state.ranking, newPlayer ]
+
+            setIntoStorage( "ranking", data )
+
+            dispatch({
+                type: ADD_PLAYER,
+                payload: data
+            })  
+
+        } catch (error) {
+
+            console.log(error)
+            
+        }
 
     }
 
     const deletePlayer = (player: Player) => {
-        
-        deleteItem(
-            player.id,
-            () => {
-                console.log("Me llame")
-                // dispatch({ type: SET_ERROR, payload: true })
-            },
-            () => dispatch({ type: DELETE_PLAYER, payload: player })
-        )
+
+        try {
+            
+            const data = state.ranking.filter( ( i : Player ) => i.id !== player.id )
+
+            setIntoStorage( "ranking", data )
+
+            dispatch({
+                type: DELETE_PLAYER,
+                payload: data
+            })  
+
+        } catch (error) {
+
+            console.log(error)
+            
+        }
+
+    }
+
+    const updatePlayer = (player: Player) => {
+
+        try {
+            
+            const data = state.ranking.map( ( i : Player ) => i.id !== player.id ? i : player )
+
+            setIntoStorage( "ranking", data )
+
+            dispatch({
+                type: UPDATE_PLAYER,
+                payload: data
+            })  
+
+        } catch (error) {
+
+            console.log(error)
+            
+        }
 
     }
 
@@ -96,11 +115,10 @@ const WorldState: FC = ({ children }) => {
             value = {{
                 ranking: state.ranking,
                 operationError: state.operationError,
-                openDB,
                 fetchRankig,
-                tryToOpenDatabase,
                 addPlayer,
-                deletePlayer
+                deletePlayer,
+                updatePlayer
             }}
         >
 

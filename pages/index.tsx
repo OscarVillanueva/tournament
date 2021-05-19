@@ -15,10 +15,10 @@ const Home = () => {
       <div className="flex flex-col justify-center items-center w-100 h-screen">
 
         <h1 className = "text-center text-white text-5xl">
-          ¡Crea un torneo!
+          RoRol
         </h1>
 
-        <div className="md:flex md:justify-between mt-20 md:gap-16">
+        <div className="md:flex md:justify-between mt-20">
 
           <div 
             className="mb-8 md:mb-8 text-blue-500 flex flex-col items-center border border-blue-300 rounded p-8 cursor-pointer bg-blue-300"
@@ -45,7 +45,7 @@ const Home = () => {
           </div>
 
           <div 
-            className="mb-8 md:mb-8 text-red-500 flex flex-col items-center border border-red-300 rounded p-8 cursor-pointer bg-red-300"
+            className="mb-8 md:mb-8 text-red-500 flex flex-col items-center border border-red-300 rounded p-8 cursor-pointer bg-red-300 md:mx-16"
             onClick = { () => router.push("/elimination") }
           >
 

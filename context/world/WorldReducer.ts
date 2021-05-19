@@ -1,5 +1,5 @@
 // Tipos - actions
-import { ADD_PLAYER, DELETE_PLAYER, FETCH_PLAYERS, SET_ERROR } from "../../types"
+import { ADD_PLAYER, DELETE_PLAYER, FETCH_PLAYERS, SET_ERROR, UPDATE_PLAYER } from "../../types"
 
 // Models
 import { Player } from "../../models/index";
@@ -14,34 +14,14 @@ const WorldReducer = ( state: any, action: Action ) : any => {
     switch (action.type) {
 
         case FETCH_PLAYERS: 
-
-            return {
-                ...state,
-                ranking: action.payload
-            }
-
         case ADD_PLAYER:
-
-            return {
-                ...state,
-                operationError: false,
-                ranking: [
-                    ...state.ranking,
-                    {
-                        id: state.ranking.length,
-                        ...action.payload
-                    }
-                ]
-            }
-
         case DELETE_PLAYER: 
-
-            console.log("Me llame al borrar", action.payload)
+        case UPDATE_PLAYER: 
 
             return {
                 ...state,
                 operationError: false,
-                ranking: state.ranking.filter( (i : Player) => i.id !== action.payload.id )
+                ranking: action.payload
             }
 
         case SET_ERROR: 
