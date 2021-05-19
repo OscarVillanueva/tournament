@@ -1,5 +1,5 @@
 // Tipos - actions
-import { ADD_PLAYER, DELETE_PLAYER, FETCH_PLAYERS, SET_ERROR, UPDATE_PLAYER } from "../../types"
+import { ADD_PLAYER, DELETE_PLAYER, FETCH_PLAYERS, SET_ERROR, SET_MATCHES, UPDATE_PLAYER } from "../../types"
 
 // Models
 import { Player } from "../../models/index";
@@ -22,6 +22,14 @@ const WorldReducer = ( state: any, action: Action ) : any => {
                 ...state,
                 operationError: false,
                 ranking: action.payload
+            }
+
+        case SET_MATCHES: 
+            
+            return {
+                ...state,
+                operationError: false,
+                matches: action.payload
             }
 
         case SET_ERROR: 

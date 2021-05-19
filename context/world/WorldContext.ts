@@ -9,6 +9,7 @@ export type WorldContent = {
     addPlayer: (player: Player) => void,
     deletePlayer: (player: Player) => void,
     updatePlayer: (player: Player) => void
+    generateSchedule: () => void
 }
 
 const WorldContext = createContext<WorldContent>({
@@ -18,6 +19,7 @@ const WorldContext = createContext<WorldContent>({
     addPlayer: (player: Player) => {},
     deletePlayer: (player: Player) => {},
     updatePlayer: (player: Player) => {},
+    generateSchedule: () => {},
 })
 
 export default WorldContext

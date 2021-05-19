@@ -24,7 +24,7 @@ export interface RankingProps {
 
 const Ranking: FC<RankingProps> = ({ ranking }) => {
 
-    const { deletePlayer } = useContext( WorldContext )
+    const { deletePlayer, generateSchedule } = useContext( WorldContext )
 
     const handleDeletePlayer = async (player: Player) => {
         
@@ -85,6 +85,8 @@ const Ranking: FC<RankingProps> = ({ ranking }) => {
                         <td className = "text-center text-white">{ player.score }</td>
                         <td className = "text-center text-red-400">
 
+                            {/* TODO: si ya se cerro quitar el botón de eliminar */}
+
                             <button
                                 onClick = { () => handleDeletePlayer( player ) }
                             >
@@ -104,6 +106,24 @@ const Ranking: FC<RankingProps> = ({ ranking }) => {
 
                 
             </tbody>
+
+            {/* TODO: Ocualtar cuando ya se presiono y solo mostrar cuando hay por lo menos 3 jugadores */}
+            <tfoot>
+
+                <tr>
+                    <td 
+                        colSpan = { 5 }
+                        className = "text-center text-white text-sm py-2"
+                    >
+                        <button
+                            onClick = { () => generateSchedule() }
+                        >
+                            Cerrar torneo / No admitir más jugadores
+                        </button>
+                    </td>
+                </tr>
+
+            </tfoot>
 
         </table>
 

@@ -31,7 +31,8 @@ const World: FC = () => {
 
     useEffect(() => {
         
-        if( ranking.length === 0 ) fetchRankig()
+        if( ranking.length === 0 ) 
+            fetchRankig()
 
     }, [])
 
