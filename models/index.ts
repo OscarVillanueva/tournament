@@ -4,3 +4,10 @@ export interface Player {
     victories: number,
     score: number
 }
+
+export interface Match {
+    id: string,
+    round: string,
+    home: Player,
+    visitor: Player
+}

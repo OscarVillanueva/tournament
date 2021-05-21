@@ -1,8 +1,9 @@
 import React,{ FC, useContext, useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
+import shortid from 'shortid'
 
 // Models
-import { Player } from "../models/index";
+import { Player, Match } from "../models/index";
 
 // Componentes
 import Layout from '../components/Layout'
@@ -18,21 +19,20 @@ const World: FC = () => {
 
     const { 
         ranking, 
+        matches,
         operationError, 
         fetchRankig, 
+        fetchMatches,
         addPlayer 
     } = useContext( WorldContext )
-
-    // useEffect(() => {
-        
-    //     if( !openDB ) tryToOpenDatabase()
-
-    // }, [openDB])
 
     useEffect(() => {
         
         if( ranking.length === 0 ) 
             fetchRankig()
+
+        if( matches.length === 0 ) 
+            fetchMatches()
 
     }, [])
 
@@ -81,19 +81,16 @@ const World: FC = () => {
                         Rol
                     </h3>
 
-                    {/* <Matches
-                        round = "Ronda 1"
-                        participants = {{
-                            home: {
-                                name: "S. Bolelli / M. Gonzales",
-                                score: 0
-                            },
-                            visitor: {
-                                name: "M. Purcel / L. Saville",
-                                score: 0
-                            }
-                        }}
-                    /> */}
+                    {matches.map(( game: Match ) => (
+                        
+                        <Matches
+                            key = { game.id }
+                            round = { game.round }
+                            participants = { game }
+                        />
+
+                    ))}
+
 
                 </div>
                 

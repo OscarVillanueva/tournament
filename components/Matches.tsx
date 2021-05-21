@@ -1,24 +1,18 @@
 import React, { FC } from 'react'
 import Match from './Match';
 
+// Models
+import { Match as MatchModel } from "../models/index";
+
 export interface MatchesProps {
     round: String, 
-    participants: {
-        home: {
-            name: String,
-            score: Number
-        },
-        visitor: {
-            name: String,
-            score: Number
-        },
-    }
+    participants: MatchModel
 }
  
 const Matches: FC<MatchesProps> = ({ round, participants }) => {
     return ( 
 
-        <div className="bg-gray-100 py-2 px-3.5 md:px-8 rounded">
+        <div className="bg-gray-100 py-2 px-3.5 md:px-8 rounded mb-8">
 
             <div className="flex justify-between mb-2">
                 <p className = "font-bold">

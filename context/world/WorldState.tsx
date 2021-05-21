@@ -4,7 +4,7 @@ import WorldReducer from './WorldReducer'
 import WorldContext from './WorldContext'
 
 // Models
-import { Player } from "../../models";
+import { Player, Match } from "../../models";
 
 // hooks
 import useLocalStorage from '../../hooks/useLocalStorage'
@@ -32,6 +32,25 @@ const WorldState: FC = ({ children }) => {
             
             dispatch({
                 type: FETCH_PLAYERS,
+                payload: data ? data : []
+            })  
+
+        } catch (error) {
+
+            console.log(error)
+            
+        }
+
+    }
+
+    const fetchMatches = () => {
+        
+        try {
+            
+            const data = getFromStorage( "matches" )
+            
+            dispatch({
+                type: SET_MATCHES,
                 payload: data ? data : []
             })  
 
@@ -128,6 +147,8 @@ const WorldState: FC = ({ children }) => {
 
         const schedule = roundsSeparation( response )
 
+        setIntoStorage( "matches", schedule )
+
         dispatch({
             type: SET_MATCHES,
             payload: schedule
@@ -162,32 +183,68 @@ const WorldState: FC = ({ children }) => {
 
     }
 
-    const roundsSeparation = ( matches: Array<any> ) : object => {
+    const roundsSeparation = ( matches: Array<any> ) : Match[] => {
         
-        let round = 1
-        let schedule = []
-        const rounds = {}
+        let schedule = {}
+        let draws: Match[] = []
         const matchesPerRound = state.ranking.length / 2
+        const rounds = state.ranking.length - 1
+
+        for (let index = 0; index <= matchesPerRound; index++) 
+            schedule[ `round-${ index + 1 }` ] = []
 
         while( matches.length > 0 ) {
 
-            if( schedule.length < matchesPerRound )
-                schedule.push( matches.shift() )
-            else {
+            const currentGame = matches.shift()
+            let flag = true
+            let counter = 1
 
-                rounds[`round-${round}`] = schedule
-                schedule = []
+            while ( flag && counter <= rounds) {
 
-                round = round + 1
+                if( lookFor( schedule[ `round-${ counter }` ], currentGame ) ) {
+
+                    schedule[ `round-${ counter }` ].push({ 
+                        ...currentGame,
+                        round: `Ronda ${ counter }`
+                    }) 
+                    flag = false
+
+                }
+
+                counter = counter + 1
 
             }
 
         }
 
-        if( schedule.length > 0 )
-            rounds[`round-${round}`] = schedule
+        const result= Object.entries( schedule ).map( i => i[1] ) 
 
-        return rounds
+        return result.flat(1) as Match[]
+
+    }
+
+    const lookFor = ( games: Match[], match: Match ) : boolean => {
+        
+        if( games.length === 0 ) return true
+
+        let flag = true
+        let counter = 0
+
+        while( flag && counter < games.length) {
+
+            let currentGame = games[ counter ]
+
+            if( currentGame.home.id === match.home.id  || currentGame.visitor.id === match.home.id )
+                flag = false
+
+            if( currentGame.home.id === match.visitor.id  || currentGame.visitor.id === match.visitor.id )
+                flag = false
+
+            counter = counter + 1
+
+        }
+
+        return flag
 
     }
 
@@ -220,8 +277,10 @@ const WorldState: FC = ({ children }) => {
         <WorldContext.Provider
             value = {{
                 ranking: state.ranking,
+                matches: state.matches,
                 operationError: state.operationError,
                 fetchRankig,
+                fetchMatches,
                 addPlayer,
                 deletePlayer,
                 updatePlayer,

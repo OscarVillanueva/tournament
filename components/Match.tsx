@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 
 export interface MatchProps {
     name: String,
@@ -6,6 +6,9 @@ export interface MatchProps {
 }
  
 const Match: FC<MatchProps> = ({ name, score }) => {
+
+    const [gameScore, setGameStore] = useState( score )
+
     return ( 
         <div className="flex justify-between items-center mb-2">
 
@@ -21,7 +24,8 @@ const Match: FC<MatchProps> = ({ name, score }) => {
                 name="scoreA" 
                 id="scoreA"
                 min = "0"
-                value = { `${score}` } 
+                onChange = { e => setGameStore( Number(e.target.value) ) }
+                value = { `${gameScore}` } 
             />
 
         </div>

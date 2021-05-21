@@ -1,8 +1,6 @@
 // Tipos - actions
 import { ADD_PLAYER, DELETE_PLAYER, FETCH_PLAYERS, SET_ERROR, SET_MATCHES, UPDATE_PLAYER } from "../../types"
 
-// Models
-import { Player } from "../../models/index";
 
 type Action = {
     type: string,

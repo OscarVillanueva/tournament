@@ -1,4 +1,4 @@
-import React, { FC, useContext} from 'react'
+import React, { FC, useContext, useState, useEffect} from 'react'
 import styled from 'styled-components'
 
 // Models
@@ -24,7 +24,28 @@ export interface RankingProps {
 
 const Ranking: FC<RankingProps> = ({ ranking }) => {
 
-    const { deletePlayer, generateSchedule } = useContext( WorldContext )
+    const [isClose, setIsClose] = useState(false)
+    const [started, setStarted] = useState(false)
+
+    const { matches, deletePlayer, generateSchedule } = useContext( WorldContext )
+
+    useEffect(() => {
+        
+        if( !ranking || ranking.length < 3 || matches.length === 0 ) {
+            
+            setIsClose( false )
+            setStarted( false )
+            
+        }
+        
+        else {
+            
+            setStarted( true )
+            setIsClose( true )
+
+        }
+
+    }, [ranking])
 
     const handleDeletePlayer = async (player: Player) => {
         
@@ -39,6 +60,14 @@ const Ranking: FC<RankingProps> = ({ ranking }) => {
         })
 
         if( response.isConfirmed ) deletePlayer( player )
+
+    }
+
+    const handleStartTournament = () => {
+        
+        setStarted( true )
+        setIsClose( true )
+        generateSchedule()
 
     }
 
@@ -64,9 +93,14 @@ const Ranking: FC<RankingProps> = ({ ranking }) => {
                         Puntos
                     </th>
 
-                    <th className = "text-center text-white">
-                        Eliminar
-                    </th>
+                    { !started && (
+
+                        <th className = "text-center text-white">
+                            Eliminar
+                        </th>
+
+                    )}
+
                 </tr>
 
             </thead>
@@ -83,21 +117,27 @@ const Ranking: FC<RankingProps> = ({ ranking }) => {
                         <td className = "text-center text-white">{ player.name }</td>
                         <td className = "text-center text-white">{ player.victories }</td>
                         <td className = "text-center text-white">{ player.score }</td>
-                        <td className = "text-center text-red-400">
 
-                            {/* TODO: si ya se cerro quitar el botón de eliminar */}
+                        { !started && (
 
-                            <button
-                                onClick = { () => handleDeletePlayer( player ) }
-                            >
+                            <td className = "text-center text-red-400">
 
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
 
-                            </button>
+                                <button
+                                    onClick = { () => handleDeletePlayer( player ) }
+                                >
 
-                        </td>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+
+                                </button>
+
+
+
+                            </td>
+
+                        )}
 
 
                     </Row>
@@ -107,23 +147,26 @@ const Ranking: FC<RankingProps> = ({ ranking }) => {
                 
             </tbody>
 
-            {/* TODO: Ocualtar cuando ya se presiono y solo mostrar cuando hay por lo menos 3 jugadores */}
-            <tfoot>
+            { !isClose && (
 
-                <tr>
-                    <td 
-                        colSpan = { 5 }
-                        className = "text-center text-white text-sm py-2"
-                    >
-                        <button
-                            onClick = { () => generateSchedule() }
+                <tfoot>
+
+                    <tr>
+                        <td 
+                            colSpan = { 5 }
+                            className = "text-center text-white text-sm py-2"
                         >
-                            Cerrar torneo / No admitir más jugadores
-                        </button>
-                    </td>
-                </tr>
+                            <button
+                                onClick = { handleStartTournament }
+                            >
+                                Cerrar torneo / No admitir más jugadores
+                            </button>
+                        </td>
+                    </tr>
 
-            </tfoot>
+                </tfoot>
+
+            )}
 
         </table>
 
