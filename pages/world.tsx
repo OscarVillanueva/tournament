@@ -1,6 +1,5 @@
 import React,{ FC, useContext, useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
-import shortid from 'shortid'
 
 // Models
 import { Player, Match } from "../models/index";
@@ -23,7 +22,8 @@ const World: FC = () => {
         operationError, 
         fetchRankig, 
         fetchMatches,
-        addPlayer 
+        addPlayer,
+        deleteTournament
     } = useContext( WorldContext )
 
     useEffect(() => {
@@ -35,6 +35,12 @@ const World: FC = () => {
             fetchMatches()
 
     }, [])
+
+    useEffect(() => {
+        
+        console.log(`matches`, matches)
+
+    }, [matches])
 
     useEffect(() => {
         
@@ -63,9 +69,27 @@ const World: FC = () => {
 
     }
 
+    const cancelTournament = async () => {
+        
+        const result = await Swal.fire({
+            title: "¿Estás seguro?",
+            icon: 'warning',
+            text: "Esta acción no se puede deshacer",
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar'
+        })
+
+        if( result.isConfirmed )
+            deleteTournament()
+
+    }
+
     return (
         <Layout
             addAction = { (item: Player) => addPlayerToTournamet( item ) }
+            cancelTournament = { cancelTournament }
         >
 
             <h1

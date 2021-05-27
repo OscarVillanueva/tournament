@@ -3,7 +3,8 @@ import {} from 'react';
 interface Actions {
     setIntoStorage: ( key: string, data: any ) => void,
     deleteFromStorage: ( key: string ) => void,
-    getFromStorage: ( key: string ) => any
+    getFromStorage: ( key: string ) => any,
+    clearStorage: ( key: string[] ) => any
 }
 
 const useLocalStorage = ( prefix: string) : Actions => {
@@ -35,10 +36,28 @@ const useLocalStorage = ( prefix: string) : Actions => {
 
     }
 
+    const clearStorage = ( keys: string[] ) => {
+
+        if( typeof window !== "undefined" ) {
+            
+            keys.forEach(key => {
+                
+                window.localStorage.removeItem( `${prefix}_${key}`)
+
+            })
+            
+
+        }
+
+        else throw new Error("LocalStorage no esta disponible")
+
+    }
+
     return {
         setIntoStorage,
         deleteFromStorage,
-        getFromStorage
+        getFromStorage,
+        clearStorage
     };
 }
  

@@ -5,9 +5,10 @@ import { Player } from '../models'
 
 export interface NavigationProps {
     addAction?: Function
+    cancelTournament?: Function
 }
  
-const Navigation: FC<NavigationProps> = ({ addAction }) => {
+const Navigation: FC<NavigationProps> = ({ addAction, cancelTournament }) => {
 
     const addToTournament = async () => {
 
@@ -24,6 +25,7 @@ const Navigation: FC<NavigationProps> = ({ addAction }) => {
             const participant: Player = {
                 name: result.value,
                 victories: 0,
+                defeats: 0,
                 score: 0
             }
 
@@ -56,7 +58,7 @@ const Navigation: FC<NavigationProps> = ({ addAction }) => {
 
             <button
                 className = "bg-red-700 transition delay-75 duration-300 ease-in-out delay hover:bg-red-800 text-gray-200 py-2 px-4 rounded text-center"
-                onClick = { () => console.log("Eliminando de la base de datos") }
+                onClick = { () => cancelTournament() }
             >
                 Cancelar torneo
             </button>

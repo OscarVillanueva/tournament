@@ -11,7 +11,9 @@ export type WorldContent = {
     addPlayer: (player: Player) => void,
     deletePlayer: (player: Player) => void,
     updatePlayer: (player: Player) => void
-    generateSchedule: () => void
+    generateSchedule: () => void,
+    deleteTournament: () => void,
+    closeMatch: (match: Match) => void
 }
 
 const WorldContext = createContext<WorldContent>({
@@ -24,6 +26,8 @@ const WorldContext = createContext<WorldContent>({
     deletePlayer: (player: Player) => {},
     updatePlayer: (player: Player) => {},
     generateSchedule: () => {},
+    deleteTournament: () => {},
+    closeMatch: (match: Match) => {},
 })
 
 export default WorldContext

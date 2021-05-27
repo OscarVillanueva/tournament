@@ -30,22 +30,22 @@ const Ranking: FC<RankingProps> = ({ ranking }) => {
     const { matches, deletePlayer, generateSchedule } = useContext( WorldContext )
 
     useEffect(() => {
-        
-        if( !ranking || ranking.length < 3 || matches.length === 0 ) {
-            
-            setIsClose( false )
-            setStarted( false )
-            
-        }
-        
-        else {
-            
-            setStarted( true )
+
+        if( matches.length > 0 ) {
+
             setIsClose( true )
+            setStarted( true )
 
         }
+        else {
 
-    }, [ranking])
+            // Si hay menos de tres jugadores el tourneo esta cerrado y no puede empezar hasta que haya
+            // por lo menos 3 jugadores
+            setIsClose( !( ranking.length >= 3 ) )
+
+        }
+        
+    }, [ ranking, matches ])
 
     const handleDeletePlayer = async (player: Player) => {
         
@@ -59,7 +59,11 @@ const Ranking: FC<RankingProps> = ({ ranking }) => {
             confirmButtonText: 'Si, ¡Borrar!'
         })
 
-        if( response.isConfirmed ) deletePlayer( player )
+        if( response.isConfirmed ) {
+
+            deletePlayer( player )
+            setStarted( false )
+        }
 
     }
 
@@ -90,6 +94,10 @@ const Ranking: FC<RankingProps> = ({ ranking }) => {
                     </th>
 
                     <th className = "text-center text-white">
+                        Derrotas
+                    </th>
+
+                    <th className = "text-center text-white">
                         Puntos
                     </th>
 
@@ -116,6 +124,7 @@ const Ranking: FC<RankingProps> = ({ ranking }) => {
                         <td className = "text-center text-white">{ index + 1 }</td>
                         <td className = "text-center text-white">{ player.name }</td>
                         <td className = "text-center text-white">{ player.victories }</td>
+                        <td className = "text-center text-white">{ player.defeats }</td>
                         <td className = "text-center text-white">{ player.score }</td>
 
                         { !started && (
@@ -153,7 +162,7 @@ const Ranking: FC<RankingProps> = ({ ranking }) => {
 
                     <tr>
                         <td 
-                            colSpan = { 5 }
+                            colSpan = { 6 }
                             className = "text-center text-white text-sm py-2"
                         >
                             <button

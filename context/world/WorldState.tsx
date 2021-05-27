@@ -10,7 +10,7 @@ import { Player, Match } from "../../models";
 import useLocalStorage from '../../hooks/useLocalStorage'
 
 // Tipos - actions
-import { ADD_PLAYER, DELETE_PLAYER, FETCH_PLAYERS, SET_MATCHES, UPDATE_PLAYER } from '../../types';
+import { ADD_PLAYER, CLEAR_STATE, CLOSE_MATCH, DELETE_PLAYER, FETCH_PLAYERS, SET_MATCHES, UPDATE_PLAYER } from '../../types';
 
 const WorldState: FC = ({ children }) => {
 
@@ -20,7 +20,7 @@ const WorldState: FC = ({ children }) => {
         operationError: false,
     }
 
-    const { getFromStorage, setIntoStorage } = useLocalStorage( "world" )
+    const { getFromStorage, setIntoStorage, clearStorage } = useLocalStorage( "world" )
 
     const [ state, dispatch ] = useReducer( WorldReducer, initialState )
 
@@ -130,6 +130,58 @@ const WorldState: FC = ({ children }) => {
 
     }
 
+    const deleteTournament = () => {
+        
+        clearStorage([ "ranking", "matches" ])
+
+        dispatch({
+            type: CLEAR_STATE,
+            payload: null
+        })
+
+    }
+
+    const closeMatch = ( match: Match ) => {
+        
+        const matches = state.matches.filter( ( m: Match ) => m.id !== match.id ? m : match)
+        // setIntoStorage( "matches", matches )
+
+        const ranking: Player[] = state.ranking.map( ( player: Player ) => {
+
+            let bridge : Player = null
+
+            if( player.id === match.home.id ) bridge = match.home
+
+            if( player.id === match.visitor.id ) bridge = match.visitor
+
+            if ( bridge ){
+
+                player.defeats = player.defeats + bridge.defeats
+                player.score = player.score + bridge.diff
+                player.victories = player.victories + bridge.victories
+
+                return player
+
+            }
+            else return player
+
+        })
+
+        const sortedRanking = ranking.sort( ( a: Player, b: Player ) => 
+        b.victories !== a.victories ? b.victories - a.victories : 
+        b.score !== a.score ? b.score - a.score : b.defeats - a.defeats)
+        // setIntoStorage( "ranking", ranking )
+
+        dispatch({
+            type: CLOSE_MATCH,
+            payload: {
+                matches,
+                ranking: sortedRanking
+            }
+        })
+
+    }
+
     const generateSchedule = () => {
         
         const shuffledRanking = shuffle( state.ranking )
@@ -189,6 +241,8 @@ const WorldState: FC = ({ children }) => {
         const matchesPerRound = ranking.length / 2
         const rounds = ranking.length - 1
 
+        // debugger
+
         ranking.shift()
 
         for (let index = 0; index < rounds; index++) 
@@ -197,24 +251,33 @@ const WorldState: FC = ({ children }) => {
         for (let index = 1; index <= rounds; index++) {
             
             let games = 1
+            let counter = 0
+            let allowed = true
             let added = true
             let current: Player = null
             let byesIterator = byes[Symbol.iterator]()
             let rankingIterator = ranking[ Symbol.iterator ]()
 
+            debugger
+
             while( games < matchesPerRound ) {
 
                 if( added ) current = next( schedule[`round-${ index }`], byesIterator, rankingIterator )
+                else counter = counter + 1
 
-                let match = matches.findIndex( 
-                    m => m.home.id === current.id || m.visitor.id === current.id 
-                )
+                let match = 0
+
+                if( current )
+                    match = matches.findIndex( 
+                        m => m.home.id === current.id || m.visitor.id === current.id 
+                    )
 
                 if( lookFor( schedule[`round-${ index }`], matches[ match ], matchesPerRound) ) {
 
                     schedule[ `round-${ index }` ].push({ 
                         ...matches[ match ],
-                        round: `Ronda ${ index }`
+                        round: `Ronda ${ index }`,
+                        closed: false
                     })
 
                     if( matches[ match ].visitor.name === "BYE" ) 
@@ -224,6 +287,7 @@ const WorldState: FC = ({ children }) => {
                     matches.splice( match, 1 )
 
                     games = games + 1
+                    counter = 0
                     added = true
                     
 
@@ -237,7 +301,33 @@ const WorldState: FC = ({ children }) => {
                     
                     added = false
 
+                    if( counter >= matches.length ) {
+
+                        counter = 0
+                        added = true
+
+                    }
+
                 }
+
+                if( (!current || current.name === "BYE") && allowed ) {
+
+                    games = 1
+                    counter = 0
+
+                    // Saco lo que estaban ya rolados y los regreso a lista
+                    const rest = schedule[`round-${ index }`]
+                                    .splice( 1,  schedule[`round-${ index }`].length)
+                    matches = [ ...matches, ...rest ]
+
+                    // Le doy vuelta al arreglo y saco un bye
+                    const rankingCopy = [ ...ranking ]
+                    rankingCopy.reverse()
+                    rankingIterator = rankingCopy[ Symbol.iterator ]()
+                    allowed = false
+
+                }
+                else allowed = true
 
             }
 
@@ -337,7 +427,9 @@ const WorldState: FC = ({ children }) => {
                 addPlayer,
                 deletePlayer,
                 updatePlayer,
-                generateSchedule
+                generateSchedule,
+                deleteTournament,
+                closeMatch
             }}
         >
 

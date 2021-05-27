@@ -7,9 +7,10 @@ import Navigation from './Navigation'
 
 export interface LayoutProps {
     addAction?: Function
+    cancelTournament?: Function
 }
  
-const Layout: FC<LayoutProps> = ({ addAction, children }) => {
+const Layout: FC<LayoutProps> = ({ addAction, cancelTournament, children }) => {
 
     const router = useRouter()
 
@@ -29,6 +30,7 @@ const Layout: FC<LayoutProps> = ({ addAction, children }) => {
                     <div className="container mx-auto">
                         <Navigation 
                             addAction = { addAction }
+                            cancelTournament = { cancelTournament }
                         />
                     </div>
                 </div>
@@ -37,7 +39,7 @@ const Layout: FC<LayoutProps> = ({ addAction, children }) => {
 
             <div className="bg-green-800 min-h-screen">
                 <div className="container mx-auto">
-                    <main className="pt-8 md:pt-0">
+                    <main className="pt-8 md:pt-0 pb-10">
             
                         { children }
 
