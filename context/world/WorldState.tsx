@@ -146,7 +146,7 @@ const WorldState: FC = ({ children }) => {
 
         const schedule = roundsSeparation( response, shuffledRanking )
         
-        // setIntoStorage( "matches", schedule )
+        setIntoStorage( "matches", schedule )
 
         dispatch({
             type: SET_MATCHES,
