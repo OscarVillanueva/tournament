@@ -38,12 +38,6 @@ const World: FC = () => {
 
     useEffect(() => {
         
-        console.log(`matches`, matches)
-
-    }, [matches])
-
-    useEffect(() => {
-        
         if( addingPlayer )
             error()
 
@@ -105,15 +99,19 @@ const World: FC = () => {
                         Rol
                     </h3>
 
-                    {matches.map(( game: Match ) => (
-                        
-                        <Matches
-                            key = { game.id }
-                            round = { game.round }
-                            participants = { game }
-                        />
+                    <div className="max-h-100 overflow-y-scroll">
 
-                    ))}
+                        {matches.map(( game: Match ) => (
+                        
+                            <Matches
+                                key = { game.id }
+                                round = { game.round }
+                                participants = { game }
+                                closed = { game.closed }
+                            />
+                        ))}
+
+                    </div>
 
 
                 </div>

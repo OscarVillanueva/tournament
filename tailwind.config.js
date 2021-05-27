@@ -1,8 +1,12 @@
 module.exports = {
-  purge: [],
+  purge: ["./pages/**/*.{js,ts,jsx,tsx}", "./componets/**/*.{js,ts,jsx,tsx}"],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {},
+    extend: {
+      maxHeight: {
+        "100": "40rem"
+      }
+    },
   },
   variants: {
     extend: {},

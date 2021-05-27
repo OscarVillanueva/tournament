@@ -4,40 +4,47 @@ import React, { FC, useState, useContext } from 'react'
 import WorldContext from '../context/world/WorldContext'
 
 // Models
-import { Match as MatchModel } from "../models/index";
+import { Match as MatchModel, Player } from "../models/index";
 
 export interface MatchesProps {
     round: string, 
-    participants: MatchModel
+    participants: MatchModel,
+    closed: boolean
 }
  
-const Matches: FC<MatchesProps> = ({ round, participants }) => {
+const Matches: FC<MatchesProps> = ({ round, participants, closed }) => {
 
-    const [ isCountableMatch ] = useState( participants.visitor.name !== "BYE" )
-    const [ homeScore , setHomeScore] = useState(0)
-    const [ visitorScore , setVisitorScore] = useState(0)
-    const [ matchFinished, setMatchFinished ] = useState(false)
+    const [ isCountableMatch ] = useState( participants.home.name !== "BYE" )
+    const [ homeScore , setHomeScore] = useState( participants.home.score )
+    const [ visitorScore , setVisitorScore] = useState( participants.visitor.score )
+    const [ matchFinished, setMatchFinished ] = useState( participants.closed )
 
     const { closeMatch } = useContext( WorldContext )
 
     const gameFinished = () => {
 
-        const { home, visitor, id } = participants
+        const home : Player = {
+            id: participants.home.id,
+            name: participants.home.name,
+            victories: homeScore > visitorScore ? 1 : 0,
+            defeats: homeScore < visitorScore ? 1 : 0,
+            score: homeScore,
+            diff: homeScore - visitorScore 
+        }
 
-        home.victories = homeScore > visitorScore ? 1 : 0
-        home.defeats = homeScore < visitorScore ? 1 : 0
-        home.score = home.score
-        home.diff = home.score + ( homeScore - visitorScore )
-
-        visitor.victories = visitorScore > homeScore ? 1 : 0
-        visitor.defeats = visitorScore < homeScore ? 1 : 0
-        visitor.score = visitor.score
-        visitor.diff = visitor.score + ( visitorScore - homeScore )
+        const visitor : Player = {
+            id: participants.visitor.id,
+            name: participants.visitor.name,
+            victories: visitorScore > homeScore ? 1 : 0,
+            defeats: visitorScore < homeScore ? 1 : 0,
+            score: visitorScore,
+            diff: visitorScore - homeScore 
+        }
 
         setMatchFinished( true )
 
         closeMatch({
-            id, 
+            id: participants.id, 
             round,
             home,
             visitor,
@@ -134,12 +141,17 @@ const Matches: FC<MatchesProps> = ({ round, participants }) => {
 
             </div>
 
-            <button
-                className = "bg-yellow-700 transition delay-75 duration-300 ease-in-out delay hover:bg-yellow-800 text-gray-200 py-2 px-4 rounded text-center my-4 md:mb-0 w-full mt-4"
-                onClick = { gameFinished }
-            >
-                Finalizar
-            </button>
+            { ( !closed ) && (
+
+                <button
+                    className = "bg-yellow-700 transition delay-75 duration-300 ease-in-out delay hover:bg-yellow-800 text-gray-200 py-2 px-4 rounded text-center my-4 md:mb-0 w-full mt-4"
+                    onClick = { gameFinished }
+                >
+                    Finalizar
+                </button>
+
+            )}
+
 
 
         </div> 

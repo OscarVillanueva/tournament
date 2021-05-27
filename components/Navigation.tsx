@@ -1,6 +1,11 @@
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import Link from 'next/link'
 import Swal from 'sweetalert2'
+
+// Context
+import WorldContext from '../context/world/WorldContext'
+
+// Modelos
 import { Player } from '../models'
 
 export interface NavigationProps {
@@ -9,6 +14,8 @@ export interface NavigationProps {
 }
  
 const Navigation: FC<NavigationProps> = ({ addAction, cancelTournament }) => {
+
+    const { matches } = useContext( WorldContext )
 
     const addToTournament = async () => {
 
@@ -49,12 +56,18 @@ const Navigation: FC<NavigationProps> = ({ addAction, cancelTournament }) => {
 
             </Link>
 
-            <button
-                className = "bg-yellow-700 transition delay-75 duration-300 ease-in-out delay hover:bg-yellow-800 text-gray-200 py-2 px-4 rounded text-center my-4 md:my-0 md:mb-0"
-                onClick = { addToTournament }
-            >
-                Agregar parcipante
-            </button>
+            { matches.length === 0 && (
+
+                <button
+                    className = "bg-yellow-700 transition delay-75 duration-300 ease-in-out delay hover:bg-yellow-800 text-gray-200 py-2 px-4 rounded text-center my-4 md:my-0 md:mb-0"
+                    onClick = { addToTournament }
+                >
+                    Agregar parcipante
+                </button>
+                
+            )}
+
+            
 
             <button
                 className = "bg-red-700 transition delay-75 duration-300 ease-in-out delay hover:bg-red-800 text-gray-200 py-2 px-4 rounded text-center"
