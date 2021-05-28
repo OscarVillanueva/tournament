@@ -42,6 +42,7 @@ const Ranking: FC<RankingProps> = ({ ranking }) => {
             // Si hay menos de tres jugadores el tourneo esta cerrado y no puede empezar hasta que haya
             // por lo menos 3 jugadores
             setIsClose( !( ranking.length >= 3 ) )
+            setStarted( false )
 
         }
         

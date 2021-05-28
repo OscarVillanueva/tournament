@@ -14,6 +14,7 @@ import WorldContext from '../context/world/WorldContext'
 
 const World: FC = () => {
 
+    const [nextRound, setNextRound] = useState(false)
     const [addingPlayer, setAddingPlayer] = useState(false)
 
     const { 
@@ -23,7 +24,8 @@ const World: FC = () => {
         fetchRankig, 
         fetchMatches,
         addPlayer,
-        deleteTournament
+        deleteTournament,
+        calcuteMatchesForSemis
     } = useContext( WorldContext )
 
     useEffect(() => {
@@ -42,6 +44,13 @@ const World: FC = () => {
             error()
 
     }, [operationError])
+
+    useEffect(() => {
+
+        if( !matches.some( (match: Match) => !match.closed ) && matches.length > 6)
+            setNextRound( true )
+        
+    }, [matches])
 
     const error = () => {
 
@@ -117,6 +126,7 @@ const World: FC = () => {
                 </div>
                 
                 <div>
+
                     <h3 className = "text-center text-white text-lg mt-8 md:mt-0">
                         Ranking
                     </h3>
@@ -124,6 +134,19 @@ const World: FC = () => {
                     <Ranking 
                         ranking = { ranking }
                     />
+
+                    { nextRound && (
+
+                        <button
+                            onClick = { () => calcuteMatchesForSemis() }
+                            className = "text-white text-sm mt-2 text-center w-full"
+                        >
+                            Jugar una semifinal 
+                        </button>
+
+                    )}
+
+
                 </div>
 
             </div>

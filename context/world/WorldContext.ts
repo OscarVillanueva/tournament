@@ -6,6 +6,7 @@ export type WorldContent = {
     ranking: Player[],
     matches: Match[],
     operationError: boolean,
+    semiCounter: number,
     fetchRankig: () => void,
     fetchMatches: () => void,
     addPlayer: (player: Player) => void,
@@ -13,13 +14,16 @@ export type WorldContent = {
     updatePlayer: (player: Player) => void
     generateSchedule: () => void,
     deleteTournament: () => void,
-    closeMatch: (match: Match) => void
+    closeMatch: (match: Match) => void,
+    calcuteMatchesForSemis: () => void,
+    setSemiCounter: (value: number) => void
 }
 
 const WorldContext = createContext<WorldContent>({
     ranking: [],
     matches: [],
     operationError: false,
+    semiCounter: 0,
     fetchRankig: () => {},
     fetchMatches: () => {},
     addPlayer: (player: Player) => {},
@@ -28,6 +32,8 @@ const WorldContext = createContext<WorldContent>({
     generateSchedule: () => {},
     deleteTournament: () => {},
     closeMatch: (match: Match) => {},
+    calcuteMatchesForSemis: () => {},
+    setSemiCounter: (value: number) => {},
 })
 
 export default WorldContext

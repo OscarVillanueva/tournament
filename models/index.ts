@@ -12,5 +12,6 @@ export interface Match {
     round: string,
     home: Player,
     visitor: Player
-    closed: boolean
+    closed: boolean,
+    semi?: boolean
 }

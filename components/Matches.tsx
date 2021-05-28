@@ -19,7 +19,7 @@ const Matches: FC<MatchesProps> = ({ round, participants, closed }) => {
     const [ visitorScore , setVisitorScore] = useState( participants.visitor.score )
     const [ matchFinished, setMatchFinished ] = useState( participants.closed )
 
-    const { closeMatch } = useContext( WorldContext )
+    const { semiCounter, closeMatch, setSemiCounter } = useContext( WorldContext )
 
     const gameFinished = () => {
 
@@ -50,6 +50,10 @@ const Matches: FC<MatchesProps> = ({ round, participants, closed }) => {
             visitor,
             closed: true
         })
+
+        // TODO: Generar el partido de la final
+        if( participants.semi ) 
+            setSemiCounter( semiCounter + 1 )
 
     }
 

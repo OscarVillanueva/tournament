@@ -10,7 +10,16 @@ import { Player, Match } from "../../models";
 import useLocalStorage from '../../hooks/useLocalStorage'
 
 // Tipos - actions
-import { ADD_PLAYER, CLEAR_STATE, CLOSE_MATCH, DELETE_PLAYER, FETCH_PLAYERS, SET_MATCHES, UPDATE_PLAYER } from '../../types';
+import { 
+    ADD_PLAYER,
+    CLEAR_STATE,
+    CLOSE_MATCH,
+    DELETE_PLAYER,
+    FETCH_PLAYERS,
+    SET_MATCHES,
+    UPDATE_PLAYER,
+    SET_SEMI_COUNTER
+} from '../../types';
 
 const WorldState: FC = ({ children }) => {
 
@@ -18,6 +27,7 @@ const WorldState: FC = ({ children }) => {
         ranking: [],
         matches: [],
         operationError: false,
+        semiCounter: 0
     }
 
     const { getFromStorage, setIntoStorage, clearStorage } = useLocalStorage( "world" )
@@ -249,6 +259,57 @@ const WorldState: FC = ({ children }) => {
 
     }
 
+    const calcuteMatchesForSemis = () => {
+        
+        const semi1: Match = {
+            id: shortid.generate(),
+            home: {
+                ...state.ranking[0],
+                score: 0
+            },
+            visitor: {
+                ...state.ranking[3],
+                score: 0
+            },
+            closed: false,
+            semi: true,
+            round: "Primera semifinal"
+        }
+
+        const semi2: Match = {
+            id: shortid.generate(),
+            home: {
+                ...state.ranking[0],
+                score: 0
+            },
+            visitor: {
+                ...state.ranking[3],
+                score: 0
+            },
+            closed: false,
+            semi: true,
+            round: "Segunda semifinal"
+        }
+
+        const bridge = [ semi1, semi2, ...state.matches ]
+
+        setIntoStorage( "matches", bridge )
+
+        dispatch({
+            type: SET_MATCHES,
+            payload: bridge
+        })
+
+    }
+
+    const setSemiCounter = (value: number) => {
+        
+        dispatch({
+            type: SET_SEMI_COUNTER,
+            payload: value
+        })
+
+    }
 
     return ( 
         <WorldContext.Provider
@@ -256,6 +317,7 @@ const WorldState: FC = ({ children }) => {
                 ranking: state.ranking,
                 matches: state.matches,
                 operationError: state.operationError,
+                semiCounter: state.semiCounter,
                 fetchRankig,
                 fetchMatches,
                 addPlayer,
@@ -263,7 +325,9 @@ const WorldState: FC = ({ children }) => {
                 updatePlayer,
                 generateSchedule,
                 deleteTournament,
-                closeMatch
+                closeMatch,
+                calcuteMatchesForSemis,
+                setSemiCounter
             }}
         >
 
