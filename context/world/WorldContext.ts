@@ -16,6 +16,7 @@ export type WorldContent = {
     deleteTournament: () => void,
     closeMatch: (match: Match) => void,
     calcuteMatchesForSemis: () => void,
+    calcuteMatchForFinal: () => void,
     setSemiCounter: (value: number) => void
 }
 
@@ -33,6 +34,7 @@ const WorldContext = createContext<WorldContent>({
     deleteTournament: () => {},
     closeMatch: (match: Match) => {},
     calcuteMatchesForSemis: () => {},
+    calcuteMatchForFinal: () => {},
     setSemiCounter: (value: number) => {},
 })
 

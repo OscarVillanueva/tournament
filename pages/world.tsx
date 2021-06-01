@@ -21,11 +21,13 @@ const World: FC = () => {
         ranking, 
         matches,
         operationError, 
+        semiCounter,
         fetchRankig, 
         fetchMatches,
         addPlayer,
         deleteTournament,
-        calcuteMatchesForSemis
+        calcuteMatchesForSemis,
+        calcuteMatchForFinal
     } = useContext( WorldContext )
 
     useEffect(() => {
@@ -47,10 +49,19 @@ const World: FC = () => {
 
     useEffect(() => {
 
-        if( !matches.some( (match: Match) => !match.closed ) && matches.length > 6)
+        const flag = !matches.some( (match: Match) => match.semi )
+
+        if( !matches.some( (match: Match) => !match.closed ) && flag && matches.length > 6 )
             setNextRound( true )
         
     }, [matches])
+
+    useEffect(() => {
+
+        if( semiCounter === 2 )
+            calcuteMatchForFinal()
+        
+    }, [semiCounter])
 
     const error = () => {
 
@@ -84,8 +95,19 @@ const World: FC = () => {
             confirmButtonText: 'Aceptar'
         })
 
-        if( result.isConfirmed )
+        if( result.isConfirmed ) {
+
             deleteTournament()
+            setNextRound( false )
+
+        }
+
+    }
+
+    const handleSemis = () => {
+        
+        calcuteMatchesForSemis()
+        setNextRound( false )
 
     }
 
@@ -138,7 +160,7 @@ const World: FC = () => {
                     { nextRound && (
 
                         <button
-                            onClick = { () => calcuteMatchesForSemis() }
+                            onClick = { handleSemis }
                             className = "text-white text-sm mt-2 text-center w-full"
                         >
                             Jugar una semifinal 

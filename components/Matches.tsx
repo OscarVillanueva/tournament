@@ -24,8 +24,7 @@ const Matches: FC<MatchesProps> = ({ round, participants, closed }) => {
     const gameFinished = () => {
 
         const home : Player = {
-            id: participants.home.id,
-            name: participants.home.name,
+            ...participants.home,
             victories: homeScore > visitorScore ? 1 : 0,
             defeats: homeScore < visitorScore ? 1 : 0,
             score: homeScore,
@@ -33,8 +32,7 @@ const Matches: FC<MatchesProps> = ({ round, participants, closed }) => {
         }
 
         const visitor : Player = {
-            id: participants.visitor.id,
-            name: participants.visitor.name,
+            ...participants.visitor,
             victories: visitorScore > homeScore ? 1 : 0,
             defeats: visitorScore < homeScore ? 1 : 0,
             score: visitorScore,
@@ -44,14 +42,13 @@ const Matches: FC<MatchesProps> = ({ round, participants, closed }) => {
         setMatchFinished( true )
 
         closeMatch({
-            id: participants.id, 
+            ...participants,
             round,
             home,
             visitor,
             closed: true
         })
 
-        // TODO: Generar el partido de la final
         if( participants.semi ) 
             setSemiCounter( semiCounter + 1 )
 

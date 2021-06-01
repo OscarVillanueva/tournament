@@ -4,7 +4,7 @@ export interface Player {
     victories: number,
     score: number,
     defeats: number,
-    diff?: number
+    diff?: number,
 }
 
 export interface Match {

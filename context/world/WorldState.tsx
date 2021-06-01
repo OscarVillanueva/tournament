@@ -153,8 +153,6 @@ const WorldState: FC = ({ children }) => {
 
     const closeMatch = ( match: Match ) => {
         
-       
-
         let matches = [ ...state.matches ]
         matches = matches.map( ( m: Match ) => m.id !== match.id ? m : match )
         matches.push( matches.shift() )
@@ -162,33 +160,40 @@ const WorldState: FC = ({ children }) => {
         setIntoStorage( "matches", matches )
 
         let ranking: Player[] = [ ...state.ranking ]
-        ranking = ranking.map( ( player: Player ) => {
 
-            let bridge : Player = null
+        if( !match.round.includes( "semifinal" ) && !match.round.includes( "Final" )) {
 
-            if( player.id === match.home.id ) bridge = match.home
+            console.log(`match.round`, match.round)
 
-            if( player.id === match.visitor.id ) bridge = match.visitor
+            ranking = ranking.map( ( player: Player ) => {
+    
+                let bridge : Player = null
+    
+                if( player.id === match.home.id ) bridge = match.home
+    
+                if( player.id === match.visitor.id ) bridge = match.visitor
+    
+                if ( bridge ){
+    
+                    player.defeats = player.defeats + bridge.defeats
+                    player.score = player.score + bridge.diff
+                    player.victories = player.victories + bridge.victories
+    
+                    return player
+    
+                }
+                else return player
+    
+            })
+    
+            ranking.sort( ( a: Player, b: Player ) => 
+                b.victories !== a.victories ? b.victories - a.victories : 
+                b.score !== a.score ? b.score - a.score : b.defeats - a.defeats
+            )
+    
+            setIntoStorage( "ranking", ranking )
 
-            if ( bridge ){
-
-                player.defeats = player.defeats + bridge.defeats
-                player.score = player.score + bridge.diff
-                player.victories = player.victories + bridge.victories
-
-                return player
-
-            }
-            else return player
-
-        })
-
-        ranking.sort( ( a: Player, b: Player ) => 
-            b.victories !== a.victories ? b.victories - a.victories : 
-            b.score !== a.score ? b.score - a.score : b.defeats - a.defeats
-        )
-
-        setIntoStorage( "ranking", ranking )
+        }
 
         dispatch({
             type: CLOSE_MATCH,
@@ -279,11 +284,11 @@ const WorldState: FC = ({ children }) => {
         const semi2: Match = {
             id: shortid.generate(),
             home: {
-                ...state.ranking[0],
+                ...state.ranking[1],
                 score: 0
             },
             visitor: {
-                ...state.ranking[3],
+                ...state.ranking[2],
                 score: 0
             },
             closed: false,
@@ -293,7 +298,7 @@ const WorldState: FC = ({ children }) => {
 
         const bridge = [ semi1, semi2, ...state.matches ]
 
-        setIntoStorage( "matches", bridge )
+        // setIntoStorage( "matches", bridge )
 
         dispatch({
             type: SET_MATCHES,
@@ -309,6 +314,48 @@ const WorldState: FC = ({ children }) => {
             payload: value
         })
 
+    }
+
+    const calcuteMatchForFinal = () => {
+        
+        const semis = state.matches.filter( (match: Match) => match.semi )
+
+        const challengers: Player[] = []   
+        
+        semis.forEach(( match: Match ) => {
+            
+            if( match.home.score > match.visitor.score ) 
+                challengers.push({ 
+                    ...match.home,
+                    score: 0
+                })
+
+            else 
+                challengers.push({ 
+                    ...match.visitor,
+                    score: 0
+                })
+
+        })
+
+        const finalMatch: Match = {
+            id: shortid.generate(),
+            home: challengers[0],
+            visitor: challengers[1],
+            closed: false,
+            semi: false,
+            round: "Final"
+        }
+        
+        const bridge = [ finalMatch, ...state.matches ]
+
+        // setIntoStorage( "matches", bridge )
+
+        dispatch({
+            type: SET_MATCHES,
+            payload: bridge
+        })
+        
     }
 
     return ( 
@@ -327,6 +374,7 @@ const WorldState: FC = ({ children }) => {
                 deleteTournament,
                 closeMatch,
                 calcuteMatchesForSemis,
+                calcuteMatchForFinal,
                 setSemiCounter
             }}
         >

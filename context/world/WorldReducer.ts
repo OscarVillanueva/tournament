@@ -1,5 +1,15 @@
 // Tipos - actions
-import { ADD_PLAYER, CLEAR_STATE, CLOSE_MATCH, DELETE_PLAYER, FETCH_PLAYERS, SET_ERROR, SET_MATCHES, UPDATE_PLAYER } from "../../types"
+import { 
+    ADD_PLAYER,
+    CLEAR_STATE,
+    CLOSE_MATCH,
+    DELETE_PLAYER,
+    FETCH_PLAYERS,
+    SET_ERROR,
+    SET_MATCHES,
+    UPDATE_PLAYER,
+    SET_SEMI_COUNTER
+} from "../../types"
 
 
 type Action = {
@@ -54,6 +64,14 @@ const WorldReducer = ( state: any, action: Action ) : any => {
                 ranking: [],
                 matches: [],
                 operationError: false,
+                semiCounter: 0
+            }
+
+        case SET_SEMI_COUNTER: 
+
+            return {
+                ...state,
+                semiCounter: action.payload
             }
 
         default: return state
