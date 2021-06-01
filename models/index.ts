@@ -13,5 +13,11 @@ export interface Match {
     home: Player,
     visitor: Player
     closed: boolean,
-    semi?: boolean
+    stage: Stage
+}
+
+export enum Stage {
+    regular,
+    semis,
+    final
 }

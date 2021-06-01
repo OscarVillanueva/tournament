@@ -2,7 +2,7 @@ import React,{ FC, useContext, useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 
 // Models
-import { Player, Match } from "../models/index";
+import { Player, Match, Stage } from "../models/index";
 
 // Componentes
 import Layout from '../components/Layout'
@@ -49,7 +49,7 @@ const World: FC = () => {
 
     useEffect(() => {
 
-        const flag = !matches.some( (match: Match) => match.semi )
+        const flag = !matches.some( (match: Match) => match.stage === Stage.semis )
 
         if( !matches.some( (match: Match) => !match.closed ) && flag && matches.length > 6 )
             setNextRound( true )

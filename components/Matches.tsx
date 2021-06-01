@@ -4,7 +4,7 @@ import React, { FC, useState, useContext } from 'react'
 import WorldContext from '../context/world/WorldContext'
 
 // Models
-import { Match as MatchModel, Player } from "../models/index";
+import { Match as MatchModel, Player, Stage } from "../models/index";
 
 export interface MatchesProps {
     round: string, 
@@ -49,7 +49,7 @@ const Matches: FC<MatchesProps> = ({ round, participants, closed }) => {
             closed: true
         })
 
-        if( participants.semi ) 
+        if( participants.stage === Stage.semis ) 
             setSemiCounter( semiCounter + 1 )
 
     }

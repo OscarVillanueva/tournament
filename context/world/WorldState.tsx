@@ -4,7 +4,7 @@ import WorldReducer from './WorldReducer'
 import WorldContext from './WorldContext'
 
 // Models
-import { Player, Match } from "../../models";
+import { Player, Match, Stage } from "../../models";
 
 // hooks
 import useLocalStorage from '../../hooks/useLocalStorage'
@@ -161,7 +161,7 @@ const WorldState: FC = ({ children }) => {
 
         let ranking: Player[] = [ ...state.ranking ]
 
-        if( !match.round.includes( "semifinal" ) && !match.round.includes( "Final" )) {
+        if( match.stage === Stage.regular ) {
 
             console.log(`match.round`, match.round)
 
@@ -247,7 +247,8 @@ const WorldState: FC = ({ children }) => {
                     home: leftPart[pointer],
                     visitor: rightPart[pointer],
                     round: `Ronda ${index + 1}`,
-                    closed: false
+                    closed: false,
+                    stage: Stage.regular
                 })
                 
             }
@@ -277,7 +278,7 @@ const WorldState: FC = ({ children }) => {
                 score: 0
             },
             closed: false,
-            semi: true,
+            stage: Stage.semis,
             round: "Primera semifinal"
         }
 
@@ -292,7 +293,7 @@ const WorldState: FC = ({ children }) => {
                 score: 0
             },
             closed: false,
-            semi: true,
+            stage: Stage.semis,
             round: "Segunda semifinal"
         }
 
@@ -318,7 +319,7 @@ const WorldState: FC = ({ children }) => {
 
     const calcuteMatchForFinal = () => {
         
-        const semis = state.matches.filter( (match: Match) => match.semi )
+        const semis = state.matches.filter( (match: Match) => match.stage === Stage.semis )
 
         const challengers: Player[] = []   
         
@@ -343,7 +344,7 @@ const WorldState: FC = ({ children }) => {
             home: challengers[0],
             visitor: challengers[1],
             closed: false,
-            semi: false,
+            stage: Stage.final,
             round: "Final"
         }
         
