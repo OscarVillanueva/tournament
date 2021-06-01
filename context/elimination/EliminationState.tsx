@@ -57,7 +57,8 @@ const EliminationState: FC = ({ children }) => {
        <EliminationContext.Provider
             value = {{
                 matches: state.matches,
-                ranking: state.ranking
+                ranking: state.ranking,
+                addPlayer
             }}
        >
            { children }
