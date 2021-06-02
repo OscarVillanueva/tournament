@@ -1,113 +1,74 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useContext, useState } from 'react'
+import Swal from 'sweetalert2'
+import Draws from '../components/Draws'
 
+// Componentes
 import Layout from '../components/Layout'
+import Participants from '../components/Participants'
+
+// Context
+import EliminationContext from '../context/elimination/EliminationContext'
+
+// Models
+import { Player, Match } from '../models'
 
 const Elimination: FC = () => {
 
+    const { matches, addPlayer, fetchMatches,  deleteTournament } = useContext( EliminationContext )
+
     useEffect(() => {
         
-        if( typeof window !== "undefined" ) {
-
-            generateBrackets()
-
-        }
+        if( matches.length === 0 ) fetchMatches()
 
     }, [])
 
-    const generateBrackets = async () => {
+    const cancelTournament = async () => {
         
-        const config = [{
-            id: 0,
-            tournament_id: 0,
-            name: "Eliminación directa",
-            type: "single_elimination",
-            number: 1,
-            settings: {
-                size: 16,
-                seedOrdering: [
-                    "natural",
-                    "natural",
-                    "reverse_half_shift",
-                    "reverse"
-                ],
-                grandFinal: "single",
-                matchesChildCount: 0
-            }
-        }]
+        const result = await Swal.fire({
+            title: "¿Estás seguro?",
+            icon: 'warning',
+            text: "Esta acción no se puede deshacer",
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar'
+        })
 
-        try {
+        if( result.isConfirmed ) {
 
-            const [ participants, matches, matchGames ] = await Promise.all([
+            deleteTournament()
 
-                (await fetch( "http://localhost:4000/participant" )).json(),
-                (await fetch( "http://localhost:4000/match" )).json(),
-                (await fetch( "http://localhost:4000/match_game" )).json(),
-
-            ])
-
-            window.bracketsViewer.render({
-                stages: config,
-                matches,
-                matchGames,
-                participants
-            }, {
-                selector: '#example',
-                participantOriginPlacement: 'before',
-                separatedChildCountLabel: true,
-                showSlotsOrigin: true,
-                showLowerBracketSlotsOrigin: false,
-                highlightParticipantOnHover: true,
-
-            })
-            
-        } catch (error) {
-            console.log(error)
         }
-        
 
     }
 
+
     return ( 
-        <Layout>
-            <h1>Eliminación directa</h1> 
+        <Layout
+            addAction = { (item: Player) => addPlayer( item ) }
+            cancelTournament = { cancelTournament }
+        >
 
-            <div className="md:grid md:grid-cols-2 mt-8 gap-8 w-11/12 mx-auto md:w-full">
+            <h1
+                className = "text-center text-xl text-white pt-10 font-bold"
+            >
+                Eliminación directa
+            </h1> 
 
-            <div>
-                    <h3 className = "text-center text-white text-lg mb-4">
-                        Rol
-                    </h3>
+            <div className="mt-8 w-11/12 mx-auto md:w-full overflow-x: scroll;">
 
-                    <div className="max-h-100 overflow-y-scroll">
-
-                        {/* {matches.map(( game: Match ) => (
-                        
-                            <Matches
-                                key = { game.id }
-                                round = { game.round }
-                                participants = { game }
-                                closed = { game.closed }
-                            />
-                        ))} */}
-
-                    </div>
-
-
-                </div>
                 
-                <div>
 
-                    <h3 className = "text-center text-white text-lg mt-8 md:mt-0">
-                        Ranking
-                    </h3>
+                { matches.length === 0 ? (
 
-                    {/* <Ranking 
-                        ranking = { ranking }
-                    /> */}
+                    <Participants />
 
-                    <div id="example" className = "bracket-viewer"></div>
+                ): (
 
-                </div>
+                    <Draws />
+
+                )}
+
 
             </div>
 
