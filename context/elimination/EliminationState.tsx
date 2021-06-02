@@ -173,6 +173,7 @@ const EliminationState: FC = ({ children }) => {
                     id: players[index].id,
                     name: players[index].name,
                     score: 0,
+                    result: players[ index + 1 ].name === "BYE" ? "win" : ""
 
                 },
                 opponent2: {
@@ -180,6 +181,7 @@ const EliminationState: FC = ({ children }) => {
                     id: players[ index + 1 ].id,
                     name: players[ index + 1 ].name,
                     score: 0,
+                    result: players[ index + 1 ].name === "BYE" ? "loss" : ""
 
                 }
 
@@ -207,6 +209,21 @@ const EliminationState: FC = ({ children }) => {
 
     }
 
+    const updateScore = (match: any) => {
+
+        let matches = [ ...state.matches ]
+
+        matches = matches.map( m => m.id === match.id ? match : m)
+        
+        setIntoStorage( "matches", matches )
+
+        dispatch({
+            type: SET_MATCHES,
+            payload: matches            
+        })
+
+    }
+
     return ( 
 
        <EliminationContext.Provider
@@ -219,7 +236,8 @@ const EliminationState: FC = ({ children }) => {
                 fetchMatches,
                 deletePlayer,
                 generateMatches,
-                deleteTournament
+                deleteTournament,
+                updateScore
             }}
        >
            { children }

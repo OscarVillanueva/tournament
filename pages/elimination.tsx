@@ -55,7 +55,7 @@ const Elimination: FC = () => {
                 Eliminación directa
             </h1> 
 
-            <div className="mt-8 w-11/12 mx-auto md:w-full overflow-x: scroll;">
+            <div className="mt-8 w-11/12 mx-auto md:w-full overflow-x-scroll">
 
                 
 
@@ -63,7 +63,7 @@ const Elimination: FC = () => {
 
                     <Participants />
 
-                ): (
+                ) : (
 
                     <Draws />
 

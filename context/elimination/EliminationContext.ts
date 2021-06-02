@@ -3,7 +3,7 @@ import { createContext } from "react";
 import { Player, Match, Tournament, TournamentType, TournamentFinal } from "../../models/index";
 
 export type EliminationContet = {
-    matches: Match[]
+    matches: any[]
     ranking: Player[],
     config: Tournament,
     addPlayer: ( player: Player ) => void
@@ -12,6 +12,7 @@ export type EliminationContet = {
     generateMatches: () => void
     deleteTournament: () => void
     deletePlayer: (player: Player ) => void
+    updateScore: (match: any ) => void
 }
 
 const EliminationContext = createContext<EliminationContet>({
@@ -40,6 +41,7 @@ const EliminationContext = createContext<EliminationContet>({
     generateMatches: () => {},
     fetchMatches: () => {},
     deleteTournament: () => {},
+    updateScore: (match: any) => {},
     deletePlayer: (player: Player ) => {},
 })
 
