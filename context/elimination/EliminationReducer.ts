@@ -4,6 +4,7 @@ import {
     CLOSE_MATCH, 
     DELETE_PLAYER, 
     FETCH_PLAYERS, 
+    INIT_TOURNAMENT, 
     NEXT_ROUND, 
     SET_MATCHES
 } from "../../types"
@@ -32,6 +33,15 @@ const EliminationReducer = ( state: any, action: Action ) : any => {
                 ...state,
                 matches: action.payload.matches,
                 remainingMatches: action.payload.count
+            }
+
+        case INIT_TOURNAMENT: 
+            
+            return {
+                ...state,
+                matches: action.payload.matches,
+                remainingMatches: action.payload.count,
+                currentRound: action.payload.currentRound
             }
 
         case CLOSE_MATCH: 

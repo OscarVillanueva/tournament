@@ -1,11 +1,9 @@
-import React, { FC, useContext, useState, useEffect } from 'react'
-import { useRouter } from "next/router";
-import Link from 'next/link'
+import React, { FC, useContext } from 'react'
+import { useRouter } from 'next/router'
 import Swal from 'sweetalert2'
 
 // Context
-import WorldContext from '../context/world/WorldContext'
-import EliminationContext from '../context/elimination/EliminationContext'
+import GlobalContext from '../context/global/GlobalContext'
 
 // Modelos
 import { Player } from '../models'
@@ -17,30 +15,9 @@ export interface NavigationProps {
  
 const Navigation: FC<NavigationProps> = ({ addAction, cancelTournament }) => {
 
-    const world = useContext( WorldContext )
-    const elimination = useContext( EliminationContext )
+    const { open, changeTournamentStatus } = useContext( GlobalContext )
 
     const router = useRouter()
-
-    const [matches, setMatches] = useState([])
-
-    // useEffect(() => {
-        
-    //     switch (router.pathname) {
-
-    //         case "/elimination":
-    //             setMatches( elimination.matches )
-    //             break;
-
-    //         case "/world":
-    //             setMatches( world.matches )
-    //             break;
-        
-    //         default:
-    //             break;
-    //     }
-
-    // }, [ world.matches, elimination.matches ])
 
     const addToTournament = async () => {
 
@@ -67,21 +44,27 @@ const Navigation: FC<NavigationProps> = ({ addAction, cancelTournament }) => {
 
     }
 
+    const handleBack = () => {
+    
+        changeTournamentStatus( true )
+        router.back()
+
+    }
+
     return ( 
 
         <header className = "bg-green-800 flex flex-col md:flex-row md:justify-between p-4 items-center">
 
-            <Link href = "/">
 
-                <a 
-                    className = "text-white uppercase text-bold text-lg hover:text-gray-200 text-right md:text-left"
-                >
-                    Regresar
-                </a>
+            <button
+                className = "text-white uppercase text-bold text-lg hover:text-gray-200 text-right md:text-left"
+                onClick = { handleBack }
+            >
+                Regresar
+            </button>
 
-            </Link>
 
-            { matches.length === 0 && (
+            { open && (
 
                 <button
                     className = "bg-yellow-700 transition delay-75 duration-300 ease-in-out delay hover:bg-yellow-800 text-gray-200 py-2 px-4 rounded text-center my-4 md:my-0 md:mb-0"
