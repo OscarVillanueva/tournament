@@ -18,7 +18,8 @@ import {
     DELETE_PLAYER, 
     FETCH_PLAYERS, 
     NEXT_ROUND, 
-    SET_MATCHES
+    SET_MATCHES,
+    INIT_TOURNAMENT
 
 } from "../../types";
 
@@ -78,6 +79,7 @@ const EliminationState: FC = ({ children }) => {
             
             const data = getFromStorage( "matches" )
             let count = 0
+            let currentRound = 0
 
             if( data ) {
 
@@ -87,16 +89,20 @@ const EliminationState: FC = ({ children }) => {
                     count = count - 1
 
                 const open = data.filter( (m: any) => !m.closed )
+                currentRound  = data.reduce( 
+                    ( total, match ) => total < match.round_id ? match.round_id : total, 0
+                )
 
                 count = open.length
 
             }
             
             dispatch({
-                type: SET_MATCHES,
+                type: INIT_TOURNAMENT,
                 payload: {
                     matches: data ? data : [],
-                    count
+                    count,
+                    currentRound
                 }
             })  
 

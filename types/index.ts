@@ -14,3 +14,4 @@ export const CLEAR_STATE = "CLEAR_STATE"
 
 // Elimination - Un solo partido
 export const NEXT_ROUND = "NEXT_ROUND"
+export const INIT_TOURNAMENT = "INIT_TOURNAMENT"

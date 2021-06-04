@@ -11,11 +11,14 @@ import Ranking from '../components/Ranking'
 
 // Context
 import WorldContext from '../context/world/WorldContext'
+import GlobalContext from '../context/global/GlobalContext'
 
 const World: FC = () => {
 
     const [nextRound, setNextRound] = useState(false)
     const [addingPlayer, setAddingPlayer] = useState(false)
+
+    const { changeTournamentStatus } = useContext( GlobalContext )
 
     const { 
         ranking, 
@@ -49,10 +52,16 @@ const World: FC = () => {
 
     useEffect(() => {
 
-        const flag = !matches.some( (match: Match) => match.stage === Stage.semis )
+        if( matches.length > 0 ) {
 
-        if( !matches.some( (match: Match) => !match.closed ) && flag && matches.length > 6 )
-            setNextRound( true )
+            const flag = !matches.some( (match: Match) => match.stage === Stage.semis )
+    
+            if( !matches.some( (match: Match) => !match.closed ) && flag && matches.length > 6 )
+                setNextRound( true )
+
+            changeTournamentStatus( false )
+        }
+
         
     }, [matches])
 
@@ -99,6 +108,7 @@ const World: FC = () => {
 
             deleteTournament()
             setNextRound( false )
+            changeTournamentStatus( true )
 
         }
 

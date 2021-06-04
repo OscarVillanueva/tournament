@@ -1,6 +1,5 @@
-import React, { FC, useContext, useState, useEffect } from 'react'
-import { useRouter } from "next/router";
-import Link from 'next/link'
+import React, { FC, useContext } from 'react'
+import { useRouter } from 'next/router'
 import Swal from 'sweetalert2'
 
 // Context
@@ -16,11 +15,9 @@ export interface NavigationProps {
  
 const Navigation: FC<NavigationProps> = ({ addAction, cancelTournament }) => {
 
-    const { open } = useContext( GlobalContext )
+    const { open, changeTournamentStatus } = useContext( GlobalContext )
 
     const router = useRouter()
-
-    const [matches, setMatches] = useState([])
 
     const addToTournament = async () => {
 
@@ -47,19 +44,25 @@ const Navigation: FC<NavigationProps> = ({ addAction, cancelTournament }) => {
 
     }
 
+    const handleBack = () => {
+    
+        changeTournamentStatus( true )
+        router.back()
+
+    }
+
     return ( 
 
         <header className = "bg-green-800 flex flex-col md:flex-row md:justify-between p-4 items-center">
 
-            <Link href = "/">
 
-                <a 
-                    className = "text-white uppercase text-bold text-lg hover:text-gray-200 text-right md:text-left"
-                >
-                    Regresar
-                </a>
+            <button
+                className = "text-white uppercase text-bold text-lg hover:text-gray-200 text-right md:text-left"
+                onClick = { handleBack }
+            >
+                Regresar
+            </button>
 
-            </Link>
 
             { open && (
 

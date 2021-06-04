@@ -34,6 +34,12 @@ const Elimination: FC = () => {
 
     useEffect(() => {
         
+        if( matches.length > 0 ) changeTournamentStatus( false )
+
+    }, [matches])
+
+    useEffect(() => {
+        
         if( remainingMatches === 0 )
             nextRound()
 

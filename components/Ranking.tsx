@@ -1,12 +1,13 @@
 import React, { FC, useContext, useState, useEffect} from 'react'
 import styled from 'styled-components'
+import Swal from 'sweetalert2';
 
 // Models
 import { Player } from "../models/index";
 
 // Context
 import WorldContext from '../context/world/WorldContext'
-import Swal from 'sweetalert2';
+import GlobalContext from '../context/global/GlobalContext'
 
 const Row = styled.tr`
     border-bottom: 1px solid#d97706;
@@ -28,6 +29,7 @@ const Ranking: FC<RankingProps> = ({ ranking }) => {
     const [started, setStarted] = useState(false)
 
     const { matches, deletePlayer, generateSchedule } = useContext( WorldContext )
+    const { changeTournamentStatus } = useContext( GlobalContext )
 
     useEffect(() => {
 
@@ -72,7 +74,9 @@ const Ranking: FC<RankingProps> = ({ ranking }) => {
         
         setStarted( true )
         setIsClose( true )
+        changeTournamentStatus( false )
         generateSchedule()
+        
 
     }
 
