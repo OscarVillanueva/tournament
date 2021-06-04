@@ -3,6 +3,7 @@ export const SET_ERROR = "SET_ERROR"
 export const SET_MATCHES = "SET_MATCHES"
 export const CLOSE_MATCH = "CLOSE_MATCH"
 export const SET_SEMI_COUNTER = "SET_SEMI_COUNTER"
+export const TOURNAMENT_STATUS = "TOURNAMENT_STATUS"
 
 // World - Todos contra todos
 export const FETCH_PLAYERS = "FETCH_PLAYERS"

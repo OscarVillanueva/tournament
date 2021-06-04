@@ -3,6 +3,7 @@ import Swal from 'sweetalert2'
 
 // Context
 import EliminationContext from '../context/elimination/EliminationContext'
+import GlobalContext from '../context/global/GlobalContext'
 
 // Model
 import { Player } from '../models'
@@ -14,6 +15,7 @@ export interface ParticipantsProps {
 const Participants: FC<ParticipantsProps> = () => {
 
     const { ranking, fetchRankig, deletePlayer, generateMatches } = useContext( EliminationContext )
+    const { changeTournamentStatus } = useContext( GlobalContext )
 
     useEffect(() => {
 
@@ -56,8 +58,12 @@ const Participants: FC<ParticipantsProps> = () => {
         
         const players = ranking.length % 2 === 0 ? ranking.length : ranking.length + 1
 
-        if( powerOfTwo( players ) )
+        if( powerOfTwo( players ) ) {
+
+            changeTournamentStatus( false )
             generateMatches()
+
+        }
 
         else 
             Swal.fire({

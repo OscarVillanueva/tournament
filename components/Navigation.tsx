@@ -4,8 +4,7 @@ import Link from 'next/link'
 import Swal from 'sweetalert2'
 
 // Context
-import WorldContext from '../context/world/WorldContext'
-import EliminationContext from '../context/elimination/EliminationContext'
+import GlobalContext from '../context/global/GlobalContext'
 
 // Modelos
 import { Player } from '../models'
@@ -17,30 +16,11 @@ export interface NavigationProps {
  
 const Navigation: FC<NavigationProps> = ({ addAction, cancelTournament }) => {
 
-    const world = useContext( WorldContext )
-    const elimination = useContext( EliminationContext )
+    const { open } = useContext( GlobalContext )
 
     const router = useRouter()
 
     const [matches, setMatches] = useState([])
-
-    // useEffect(() => {
-        
-    //     switch (router.pathname) {
-
-    //         case "/elimination":
-    //             setMatches( elimination.matches )
-    //             break;
-
-    //         case "/world":
-    //             setMatches( world.matches )
-    //             break;
-        
-    //         default:
-    //             break;
-    //     }
-
-    // }, [ world.matches, elimination.matches ])
 
     const addToTournament = async () => {
 
@@ -81,7 +61,7 @@ const Navigation: FC<NavigationProps> = ({ addAction, cancelTournament }) => {
 
             </Link>
 
-            { matches.length === 0 && (
+            { open && (
 
                 <button
                     className = "bg-yellow-700 transition delay-75 duration-300 ease-in-out delay hover:bg-yellow-800 text-gray-200 py-2 px-4 rounded text-center my-4 md:my-0 md:mb-0"

@@ -8,6 +8,7 @@ import Participants from '../components/Participants'
 
 // Context
 import EliminationContext from '../context/elimination/EliminationContext'
+import GlobalContext from '../context/global/GlobalContext'
 
 // Models
 import { Player } from '../models'
@@ -22,6 +23,8 @@ const Elimination: FC = () => {
         deleteTournament,
         nextRound
     } = useContext( EliminationContext )
+
+    const { changeTournamentStatus } = useContext( GlobalContext )
 
     useEffect(() => {
         
@@ -51,6 +54,7 @@ const Elimination: FC = () => {
         if( result.isConfirmed ) {
 
             deleteTournament()
+            changeTournamentStatus( true )
 
         }
 
