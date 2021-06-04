@@ -10,3 +10,6 @@ export const ADD_PLAYER = "ADD_PLAYER"
 export const DELETE_PLAYER = "DELETE_PLAYER"
 export const UPDATE_PLAYER = "UPDATE_PLAYER"
 export const CLEAR_STATE = "CLEAR_STATE"
+
+// Elimination - Un solo partido
+export const NEXT_ROUND = "NEXT_ROUND"

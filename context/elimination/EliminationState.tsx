@@ -14,8 +14,10 @@ import {
 
     ADD_PLAYER, 
     CLEAR_STATE, 
+    CLOSE_MATCH, 
     DELETE_PLAYER, 
     FETCH_PLAYERS, 
+    NEXT_ROUND, 
     SET_MATCHES
 
 } from "../../types";
@@ -25,6 +27,8 @@ const EliminationState: FC = ({ children }) => {
     const initialState = {
         ranking: [],
         matches: [],
+        currentRound: 0,
+        remainingMatches: -1,
         config: {
             id: 0,
             tournament_id: 0,
@@ -138,7 +142,7 @@ const EliminationState: FC = ({ children }) => {
     const generateMatches = () => {
         
         const players = [ ...state.ranking ]
-        const matches = []
+        let matches = []
 
         if( players.length % 2 !== 0 ){
 
@@ -158,36 +162,7 @@ const EliminationState: FC = ({ children }) => {
 
         }
 
-        for (let index = 0; index <= (players.length - 2); index = index + 2) {
-            
-            matches.push({
-                
-                id: shortid.generate(),
-                stage_id: 0,
-                group_id: 0,
-                round_id: 0,
-                status: 3,
-                number: index,
-                opponent1: {
-
-                    id: players[index].id,
-                    name: players[index].name,
-                    score: 0,
-                    result: players[ index + 1 ].name === "BYE" ? "win" : ""
-
-                },
-                opponent2: {
-
-                    id: players[ index + 1 ].id,
-                    name: players[ index + 1 ].name,
-                    score: 0,
-                    result: players[ index + 1 ].name === "BYE" ? "loss" : ""
-
-                }
-
-            })
-            
-        }
+        matches = getMatches( players, 0)
 
         setIntoStorage( "matches", matches )
 
@@ -215,13 +190,85 @@ const EliminationState: FC = ({ children }) => {
 
         matches = matches.map( m => m.id === match.id ? match : m)
         
-        setIntoStorage( "matches", matches )
+        // setIntoStorage( "matches", matches )
 
         dispatch({
-            type: SET_MATCHES,
+            type: CLOSE_MATCH,
             payload: matches            
         })
 
+    }
+
+    const nextRound = () => {
+        
+        const matchesOfRound = state.matches.filter( (m: any) => m.round_id === state.currentRound )
+
+        const winners = matchesOfRound.map( (m: any) => {
+
+            if( m.opponent1.result === "win" ) return m.opponent1
+
+            if( m.opponent2.result === "win" ) return m.opponent2
+
+        })
+
+        if(winners.length === 1) return 
+
+        if( winners.length % 2 !== 0 )
+            winners.push( state.ranking.find( ( player: Player ) => player.name = "BYE" ) )
+
+        const newMatches = getMatches( winners, ( state.currentRound + 1 ))
+        
+        const matches = [ ...state.matches, ...newMatches ]
+
+        // setIntoStorage( "matches", matches )
+
+        dispatch({
+            type: NEXT_ROUND,
+            payload: {
+                matches,
+                count: newMatches.length
+            }
+        })
+
+    }
+
+    const getMatches = ( players: Player[], round: number): any[] => {
+        
+        let matches = []
+
+        for (let index = 0; index <= (players.length - 2); index = index + 2) {
+            
+            matches.push({
+                
+                id: shortid.generate(),
+                stage_id: 0,
+                group_id: 0,
+                round_id: round,
+                status: 3,
+                number: index,
+                closed: false,
+                opponent1: {
+
+                    id: players[index].id,
+                    name: players[index].name,
+                    score: 0,
+                    result: players[ index + 1 ].name === "BYE" ? "win" : ""
+
+                },
+                opponent2: {
+
+                    id: players[ index + 1 ].id,
+                    name: players[ index + 1 ].name,
+                    score: 0,
+                    result: players[ index + 1 ].name === "BYE" ? "loss" : ""
+
+                }
+
+            })
+            
+        }
+
+        return matches
     }
 
     return ( 
@@ -231,13 +278,16 @@ const EliminationState: FC = ({ children }) => {
                 matches: state.matches,
                 ranking: state.ranking,
                 config: state.config,
+                currentRound: state.currentRound,
+                remainingMatches: state.remainingMatches,
                 addPlayer,
                 fetchRankig,
                 fetchMatches,
                 deletePlayer,
                 generateMatches,
                 deleteTournament,
-                updateScore
+                updateScore,
+                nextRound
             }}
        >
            { children }

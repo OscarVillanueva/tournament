@@ -10,17 +10,31 @@ import Participants from '../components/Participants'
 import EliminationContext from '../context/elimination/EliminationContext'
 
 // Models
-import { Player, Match } from '../models'
+import { Player } from '../models'
 
 const Elimination: FC = () => {
 
-    const { matches, addPlayer, fetchMatches,  deleteTournament } = useContext( EliminationContext )
+    const { 
+        matches, 
+        remainingMatches,
+        addPlayer, 
+        fetchMatches,  
+        deleteTournament,
+        nextRound
+    } = useContext( EliminationContext )
 
     useEffect(() => {
         
         if( matches.length === 0 ) fetchMatches()
 
     }, [])
+
+    useEffect(() => {
+        
+        if( remainingMatches === 0 )
+            nextRound()
+
+    }, [remainingMatches])
 
     const cancelTournament = async () => {
         

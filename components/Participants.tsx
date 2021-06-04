@@ -78,7 +78,7 @@ const Participants: FC<ParticipantsProps> = () => {
 
                 ))}
 
-                { ranking.length > 3 && (
+                { ranking.length > 7 && (
 
                     <button
                         onClick = { () => generateMatches() }

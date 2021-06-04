@@ -1,8 +1,10 @@
 import { 
     ADD_PLAYER, 
     CLEAR_STATE, 
+    CLOSE_MATCH, 
     DELETE_PLAYER, 
     FETCH_PLAYERS, 
+    NEXT_ROUND, 
     SET_MATCHES
 } from "../../types"
 
@@ -28,7 +30,25 @@ const EliminationReducer = ( state: any, action: Action ) : any => {
             
             return {
                 ...state,
-                matches: action.payload
+                matches: action.payload,
+                remainingMatches: action.payload.length
+            }
+
+        case CLOSE_MATCH: 
+
+            return {
+                ...state, 
+                matches: action.payload,
+                remainingMatches: state.remainingMatches - 1
+            }
+
+        case NEXT_ROUND:
+
+            return {
+                ...state,
+                matches: action.payload.matches,
+                remainingMatches: action.payload.count,
+                currentRound: state.currentRound + 1
             }
             
         case CLEAR_STATE: 
@@ -36,7 +56,9 @@ const EliminationReducer = ( state: any, action: Action ) : any => {
             return {
                 ...state, 
                 ranking: [],
-                matches: []
+                matches: [],
+                remainingMatches: 0,
+                currentRound: 0
             }    
 
         default: return state
