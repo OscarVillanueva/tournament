@@ -24,24 +24,23 @@ const Navigation: FC<NavigationProps> = ({ addAction, cancelTournament }) => {
 
     const [matches, setMatches] = useState([])
 
-    useEffect(() => {
+    // useEffect(() => {
         
-       if( matches.length === 0 ) 
-        switch (router.pathname) {
+    //     switch (router.pathname) {
 
-            case "/elimination":
-                setMatches( elimination.matches )
-                break;
+    //         case "/elimination":
+    //             setMatches( elimination.matches )
+    //             break;
 
-            case "/world":
-                setMatches( world.matches )
-                break;
+    //         case "/world":
+    //             setMatches( world.matches )
+    //             break;
         
-            default:
-                break;
-        }
+    //         default:
+    //             break;
+    //     }
 
-    }, [ world.matches, elimination.matches ])
+    // }, [ world.matches, elimination.matches ])
 
     const addToTournament = async () => {
 

@@ -13,6 +13,8 @@ const Draws: FC<DrawsProps> = () => {
     const {  ranking, matches, config, updateScore } = useContext( EliminationContext )
     const [current, setCurrent] = useState( null )
     const [isOpen, setIsOpen] = useState(false)
+    const [scoreA, setScoreA] = useState( current ? current.opponent1.score : 0 )
+    const [scoreB, setScoreB] = useState( current ? current.opponent2.score : 0 )
 
     useEffect(() => {
         
@@ -76,47 +78,32 @@ const Draws: FC<DrawsProps> = () => {
 
     }
 
-    const handleChange = (e: ChangeEvent) => {
-        
-        if( e.target.value.trim() !== "" )
-
-            if( current.opponent1.id === e.target.id )
-                setCurrent({
-                    ...current,
-                    opponent1: {
-                        ...current.opponent1,
-                        score: e.target.value
-                    }
-                })
-
-            else
-                setCurrent({
-                    ...current,
-                    opponent2: {
-                        ...current.opponent2,
-                        score: e.target.value
-                    }
-                })
-
-    }
-    
     const gameFinished = () => {
         
-        const matchFinished = {
-            ...current,
-            closed: true,
-            opponent1: {
-                ...current.opponent1,
-                result: current.opponent1.score > current.opponent2.score ? "win" : "loss"
-            },
-            opponent2: {
-                ...current.opponent2,
-                result: current.opponent1.score > current.opponent2.score ? "loss" : "win"
-            }
-        }   
+        if( scoreA.trim() !== "" && scoreB.trim() !== "") {
 
-        updateScore( matchFinished )
-        setIsOpen( false )
+            const matchFinished = {
+                ...current,
+                closed: true,
+                opponent1: {
+                    ...current.opponent1,
+                    result: scoreA > scoreB ? "win" : "loss",
+                    score: scoreA
+                },
+                opponent2: {
+                    ...current.opponent2,
+                    result: scoreA > scoreB ? "loss" : "win",
+                    score: scoreB
+                }
+            }   
+    
+            updateScore( matchFinished )
+            setIsOpen( false )
+            setScoreA( 0 )
+            setScoreB( 0 )
+
+        }
+
 
     }
 
@@ -156,8 +143,8 @@ const Draws: FC<DrawsProps> = () => {
                                 name= { current.opponent1.id } 
                                 id= { current.opponent1.id }
                                 min = "0"
-                                onChange = { e => handleChange( e ) }
-                                value = { `${ current.opponent1.score }` } 
+                                onChange = { e => setScoreA( e.target.value ) }
+                                value = { `${ scoreA }` } 
                             />
 
 
@@ -177,8 +164,8 @@ const Draws: FC<DrawsProps> = () => {
                                 name= { current.opponent2.id } 
                                 id= { current.opponent2.id }
                                 min = "0"
-                                onChange = { e => handleChange( e ) }
-                                value = { `${ current.opponent2.score }` } 
+                                onChange = { e => setScoreB( e.target.value ) }
+                                value = { `${ scoreB }` } 
                             />
 
 

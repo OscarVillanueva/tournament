@@ -30,8 +30,8 @@ const EliminationReducer = ( state: any, action: Action ) : any => {
             
             return {
                 ...state,
-                matches: action.payload,
-                remainingMatches: action.payload.length
+                matches: action.payload.matches,
+                remainingMatches: action.payload.count
             }
 
         case CLOSE_MATCH: 
@@ -57,7 +57,7 @@ const EliminationReducer = ( state: any, action: Action ) : any => {
                 ...state, 
                 ranking: [],
                 matches: [],
-                remainingMatches: 0,
+                remainingMatches: -1,
                 currentRound: 0
             }    
 

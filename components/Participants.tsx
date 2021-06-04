@@ -44,6 +44,30 @@ const Participants: FC<ParticipantsProps> = () => {
 
     }
 
+    const powerOfTwo = ( n: number ) : boolean => {
+        
+        if( typeof n !== 'number' || n < 7 ) return false
+
+        return n && n !== 0 && ( n & ( n - 1 ) ) === 0
+
+    }
+
+    const requestMatches = () => {
+        
+        const players = ranking.length % 2 === 0 ? ranking.length : ranking.length + 1
+
+        if( powerOfTwo( players ) )
+            generateMatches()
+
+        else 
+            Swal.fire({
+                icon: 'error',
+                title: 'Cantidad de jugadores insuficientes',
+                text: 'Se necesitan 8, 16, 32, 64 . . . '
+            })
+
+    }
+
     return ( 
 
         <div>
@@ -52,7 +76,7 @@ const Participants: FC<ParticipantsProps> = () => {
                     Participantes
                 </h3>
 
-                {ranking.map( (player: Player) => (
+                {ranking.map( (player: Player, index: number) => (
                     
                     <div
                         key = { player.id }
@@ -61,7 +85,7 @@ const Participants: FC<ParticipantsProps> = () => {
                         <p
                             className = "text-gray-100"
                         >
-                            { player.name }
+                            {` ${ index + 1 } - ${ player.name }`}
                         </p>
 
                         <button
@@ -81,7 +105,7 @@ const Participants: FC<ParticipantsProps> = () => {
                 { ranking.length > 7 && (
 
                     <button
-                        onClick = { () => generateMatches() }
+                        onClick = { () => requestMatches() }
                         className = "text-center text-white text-sm w-full mt-4"
                     >
                         Cerrar torneo / No admitir más jugadores

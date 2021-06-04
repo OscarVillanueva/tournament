@@ -56,7 +56,6 @@ const Elimination: FC = () => {
 
     }
 
-
     return ( 
         <Layout
             addAction = { (item: Player) => addPlayer( item ) }
@@ -70,8 +69,6 @@ const Elimination: FC = () => {
             </h1> 
 
             <div className="mt-8 w-11/12 mx-auto md:w-full overflow-x-scroll">
-
-                
 
                 { matches.length === 0 ? (
 

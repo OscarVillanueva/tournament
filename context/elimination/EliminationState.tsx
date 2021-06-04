@@ -77,10 +77,27 @@ const EliminationState: FC = ({ children }) => {
         try {
             
             const data = getFromStorage( "matches" )
+            let count = 0
+
+            if( data ) {
+
+                count = data.length
+
+                if( data.some( ( m:any ) => m.opponent2.name === "BYE" ) ) 
+                    count = count - 1
+
+                const open = data.filter( (m: any) => !m.closed )
+
+                count = open.length
+
+            }
             
             dispatch({
                 type: SET_MATCHES,
-                payload: data ? data : []
+                payload: {
+                    matches: data ? data : [],
+                    count
+                }
             })  
 
         } catch (error) {
@@ -143,6 +160,7 @@ const EliminationState: FC = ({ children }) => {
         
         const players = [ ...state.ranking ]
         let matches = []
+        let less = 0
 
         if( players.length % 2 !== 0 ){
 
@@ -154,6 +172,8 @@ const EliminationState: FC = ({ children }) => {
             })
 
             setIntoStorage( "ranking", players )
+
+            less = less - 1
 
             dispatch({
                 type: ADD_PLAYER,
@@ -168,7 +188,10 @@ const EliminationState: FC = ({ children }) => {
 
         dispatch({
             type: SET_MATCHES,
-            payload: matches            
+            payload: {
+                matches,
+                count: matches.length + less
+            }            
         })
 
     }
@@ -190,7 +213,7 @@ const EliminationState: FC = ({ children }) => {
 
         matches = matches.map( m => m.id === match.id ? match : m)
         
-        // setIntoStorage( "matches", matches )
+        setIntoStorage( "matches", matches )
 
         dispatch({
             type: CLOSE_MATCH,
@@ -202,6 +225,7 @@ const EliminationState: FC = ({ children }) => {
     const nextRound = () => {
         
         const matchesOfRound = state.matches.filter( (m: any) => m.round_id === state.currentRound )
+        let less = 0
 
         const winners = matchesOfRound.map( (m: any) => {
 
@@ -213,20 +237,23 @@ const EliminationState: FC = ({ children }) => {
 
         if(winners.length === 1) return 
 
-        if( winners.length % 2 !== 0 )
+        if( winners.length % 2 !== 0 ) {
+
             winners.push( state.ranking.find( ( player: Player ) => player.name = "BYE" ) )
+            less = less - 1
+        }
 
         const newMatches = getMatches( winners, ( state.currentRound + 1 ))
         
         const matches = [ ...state.matches, ...newMatches ]
 
-        // setIntoStorage( "matches", matches )
+        setIntoStorage( "matches", matches )
 
         dispatch({
             type: NEXT_ROUND,
             payload: {
                 matches,
-                count: newMatches.length
+                count: newMatches.length + less
             }
         })
 
