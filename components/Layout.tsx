@@ -21,6 +21,8 @@ const Layout: FC<LayoutProps> = ({ addAction, cancelTournament, children }) => {
             <Head>
 
                 <title>RoRol</title>
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/brackets-viewer/dist/brackets-viewer.min.css" />
+                <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brackets-viewer/dist/brackets-viewer.min.js"></script>
 
             </Head>
 

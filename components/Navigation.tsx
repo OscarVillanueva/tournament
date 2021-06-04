@@ -1,9 +1,11 @@
-import React, { FC, useContext } from 'react'
+import React, { FC, useContext, useState, useEffect } from 'react'
+import { useRouter } from "next/router";
 import Link from 'next/link'
 import Swal from 'sweetalert2'
 
 // Context
 import WorldContext from '../context/world/WorldContext'
+import EliminationContext from '../context/elimination/EliminationContext'
 
 // Modelos
 import { Player } from '../models'
@@ -15,7 +17,30 @@ export interface NavigationProps {
  
 const Navigation: FC<NavigationProps> = ({ addAction, cancelTournament }) => {
 
-    const { matches } = useContext( WorldContext )
+    const world = useContext( WorldContext )
+    const elimination = useContext( EliminationContext )
+
+    const router = useRouter()
+
+    const [matches, setMatches] = useState([])
+
+    // useEffect(() => {
+        
+    //     switch (router.pathname) {
+
+    //         case "/elimination":
+    //             setMatches( elimination.matches )
+    //             break;
+
+    //         case "/world":
+    //             setMatches( world.matches )
+    //             break;
+        
+    //         default:
+    //             break;
+    //     }
+
+    // }, [ world.matches, elimination.matches ])
 
     const addToTournament = async () => {
 

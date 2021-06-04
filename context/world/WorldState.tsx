@@ -163,8 +163,6 @@ const WorldState: FC = ({ children }) => {
 
         if( match.stage === Stage.regular ) {
 
-            console.log(`match.round`, match.round)
-
             ranking = ranking.map( ( player: Player ) => {
     
                 let bridge : Player = null
