@@ -3,16 +3,17 @@ import { Modal } from '@material-ui/core'
 
 // Context
 import EliminationContext from '../../context/elimination/EliminationContext'
+import GlobalContext from '../../context/global/GlobalContext'
 
-export interface DrawsProps {
-    
-}
  
-const Draws: FC<DrawsProps> = () => {
+const Draws: FC = () => {
 
     const {  ranking, matches, config, updateScore } = useContext( EliminationContext )
+    const { changeTournamentStatus } = useContext( GlobalContext )
+
     const [current, setCurrent] = useState( null )
     const [isOpen, setIsOpen] = useState(false)
+
     const [scoreA, setScoreA] = useState( current ? current.opponent1.score : 0 )
     const [scoreB, setScoreB] = useState( current ? current.opponent2.score : 0 )
 
@@ -23,6 +24,8 @@ const Draws: FC<DrawsProps> = () => {
             generateBrackets()
 
         }
+
+        if( matches.length > 0 ) changeTournamentStatus( false )
 
     },  [ matches ])
 
