@@ -13,24 +13,19 @@ import Ranking from '../components/world/Ranking'
 import WorldContext from '../context/world/WorldContext'
 import GlobalContext from '../context/global/GlobalContext'
 import RankingContainer from '../components/world/RankingContainer';
+import MatchList from '../components/world/MatchList';
 
 const World: FC = () => {
-
     
-    const [addingPlayer, setAddingPlayer] = useState(false)
-
     const { changeTournamentStatus } = useContext( GlobalContext )
 
     const { 
         ranking, 
         matches,
-        operationError, 
-        semiCounter,
         fetchRankig, 
         fetchMatches,
         addPlayer,
         deleteTournament,
-        calcuteMatchForFinal
     } = useContext( WorldContext )
 
     useEffect(() => {
@@ -43,39 +38,7 @@ const World: FC = () => {
 
     }, [])
 
-    useEffect(() => {
-        
-        if( addingPlayer )
-            error()
-
-    }, [operationError])
-
-    useEffect(() => {
-
-        if( semiCounter === 2 )
-            calcuteMatchForFinal()
-        
-    }, [semiCounter])
-
-    const error = () => {
-
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Ocurrio un error intenta más tarde',
-        })
-
-        setAddingPlayer( false )
-        
-    }
-
-    const addPlayerToTournamet = (player: Player) => {
-        
-        setAddingPlayer( true )
-
-        addPlayer( player )
-
-    }
+    const addPlayerToTournamet = (player: Player) => addPlayer( player )
 
     const cancelTournament = async () => {
         
@@ -114,24 +77,8 @@ const World: FC = () => {
             <div className="md:grid md:grid-cols-2 mt-8 gap-8 w-11/12 mx-auto md:w-full">
 
                 <div>
-                    <h3 className = "text-center text-white text-lg mb-4">
-                        Rol
-                    </h3>
 
-                    <div className="max-h-100 overflow-y-scroll">
-
-                        {matches.map(( game: Match ) => (
-                        
-                            <Matches
-                                key = { game.id }
-                                round = { game.round }
-                                participants = { game }
-                                closed = { game.closed }
-                            />
-                        ))}
-
-                    </div>
-
+                    <MatchList />
 
                 </div>
                 

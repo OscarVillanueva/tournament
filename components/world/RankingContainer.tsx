@@ -10,11 +10,7 @@ import GlobalContext from '../../context/global/GlobalContext'
 // Componentes
 import Ranking from './Ranking';
 
-export interface RankingContainerProps {
-    
-}
- 
-const RankingContainer: FC<RankingContainerProps> = () => {
+const RankingContainer: FC = () => {
 
     const [nextRound, setNextRound] = useState(false)
 
