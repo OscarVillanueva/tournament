@@ -1,13 +1,11 @@
-import React,{ FC, useContext, useEffect, useState } from 'react'
+import React,{ FC, useContext, useEffect } from 'react'
 import Swal from 'sweetalert2'
 
 // Models
-import { Player, Match, Stage } from "../models/index";
+import { Player } from "../models/index";
 
 // Componentes
 import Layout from '../components/layout/Layout'
-import Matches from '../components/world/Matches'
-import Ranking from '../components/world/Ranking'
 
 // Context
 import WorldContext from '../context/world/WorldContext'
@@ -20,12 +18,12 @@ const World: FC = () => {
     const { changeTournamentStatus } = useContext( GlobalContext )
 
     const { 
-        ranking, 
+        ranking,
         matches,
-        fetchRankig, 
+        fetchRankig,
         fetchMatches,
         addPlayer,
-        deleteTournament,
+        deleteTournament 
     } = useContext( WorldContext )
 
     useEffect(() => {
