@@ -57,3 +57,8 @@ export enum TournamentFinal {
     double = "double",
 
 }
+
+export interface Action {
+    type: string,
+    payload: any
+}

@@ -1,9 +1,6 @@
 import { TOURNAMENT_STATUS } from "../../types"
 
-type Action = {
-    type: string,
-    payload: any
-}
+import { Action } from "../../models";
 
 const GlobalReducer = ( state: any, action: Action ) : any => {
     
