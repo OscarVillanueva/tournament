@@ -12,10 +12,11 @@ import Ranking from '../components/world/Ranking'
 // Context
 import WorldContext from '../context/world/WorldContext'
 import GlobalContext from '../context/global/GlobalContext'
+import RankingContainer from '../components/world/RankingContainer';
 
 const World: FC = () => {
 
-    const [nextRound, setNextRound] = useState(false)
+    
     const [addingPlayer, setAddingPlayer] = useState(false)
 
     const { changeTournamentStatus } = useContext( GlobalContext )
@@ -29,7 +30,6 @@ const World: FC = () => {
         fetchMatches,
         addPlayer,
         deleteTournament,
-        calcuteMatchesForSemis,
         calcuteMatchForFinal
     } = useContext( WorldContext )
 
@@ -49,21 +49,6 @@ const World: FC = () => {
             error()
 
     }, [operationError])
-
-    useEffect(() => {
-
-        if( matches.length > 0 ) {
-
-            const flag = !matches.some( (match: Match) => match.stage === Stage.semis )
-    
-            if( !matches.some( (match: Match) => !match.closed ) && flag && matches.length > 6 )
-                setNextRound( true )
-
-            changeTournamentStatus( false )
-        }
-
-        
-    }, [matches])
 
     useEffect(() => {
 
@@ -107,21 +92,14 @@ const World: FC = () => {
         if( result.isConfirmed ) {
 
             deleteTournament()
-            setNextRound( false )
             changeTournamentStatus( true )
 
         }
 
     }
 
-    const handleSemis = () => {
-        
-        calcuteMatchesForSemis()
-        setNextRound( false )
-
-    }
-
     return (
+
         <Layout
             addAction = { (item: Player) => addPlayerToTournamet( item ) }
             cancelTournament = { cancelTournament }
@@ -159,25 +137,7 @@ const World: FC = () => {
                 
                 <div>
 
-                    <h3 className = "text-center text-white text-lg mt-8 md:mt-0">
-                        Ranking
-                    </h3>
-
-                    <Ranking 
-                        ranking = { ranking }
-                    />
-
-                    { nextRound && (
-
-                        <button
-                            onClick = { handleSemis }
-                            className = "text-white text-sm mt-2 text-center w-full"
-                        >
-                            Jugar una semifinal 
-                        </button>
-
-                    )}
-
+                    <RankingContainer />
 
                 </div>
 
