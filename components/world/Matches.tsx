@@ -1,10 +1,10 @@
 import React, { FC, useState, useContext } from 'react'
 
 // Context
-import WorldContext from '../context/world/WorldContext'
+import WorldContext from '../../context/world/WorldContext'
 
 // Models
-import { Match as MatchModel, Player, Stage } from "../models/index";
+import { Match as MatchModel, Player, Stage } from "../../models/index";
 
 export interface MatchesProps {
     round: string, 

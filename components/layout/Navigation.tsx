@@ -3,10 +3,10 @@ import { useRouter } from 'next/router'
 import Swal from 'sweetalert2'
 
 // Context
-import GlobalContext from '../context/global/GlobalContext'
+import GlobalContext from '../../context/global/GlobalContext'
 
 // Modelos
-import { Player } from '../models'
+import { Player } from '../../models'
 
 export interface NavigationProps {
     addAction?: Function

@@ -1,10 +1,10 @@
 import React, { FC, useEffect, useContext, useState } from 'react'
 import Swal from 'sweetalert2'
-import Draws from '../components/Draws'
+import Draws from '../components/elimation/Draws'
 
 // Componentes
-import Layout from '../components/Layout'
-import Participants from '../components/Participants'
+import Layout from '../components/layout/Layout'
+import Participants from '../components/elimation/Participants'
 
 // Context
 import EliminationContext from '../context/elimination/EliminationContext'

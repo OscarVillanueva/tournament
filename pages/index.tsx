@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouter } from "next/router";
 
 // Components
-import Layout from '../components/Layout'
+import Layout from '../components/layout/Layout'
 
 const Home = () => {
 

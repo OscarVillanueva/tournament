@@ -3,11 +3,11 @@ import styled from 'styled-components'
 import Swal from 'sweetalert2';
 
 // Models
-import { Player } from "../models/index";
+import { Player } from "../../models/index";
 
 // Context
-import WorldContext from '../context/world/WorldContext'
-import GlobalContext from '../context/global/GlobalContext'
+import WorldContext from '../../context/world/WorldContext'
+import GlobalContext from '../../context/global/GlobalContext'
 
 const Row = styled.tr`
     border-bottom: 1px solid#d97706;

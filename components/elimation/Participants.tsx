@@ -2,11 +2,11 @@ import React, { FC, useContext, useEffect } from 'react'
 import Swal from 'sweetalert2'
 
 // Context
-import EliminationContext from '../context/elimination/EliminationContext'
-import GlobalContext from '../context/global/GlobalContext'
+import EliminationContext from '../../context/elimination/EliminationContext'
+import GlobalContext from '../../context/global/GlobalContext'
 
 // Model
-import { Player } from '../models'
+import { Player } from '../../models'
 
 export interface ParticipantsProps {
     

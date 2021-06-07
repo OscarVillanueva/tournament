@@ -5,9 +5,9 @@ import Swal from 'sweetalert2'
 import { Player, Match, Stage } from "../models/index";
 
 // Componentes
-import Layout from '../components/Layout'
-import Matches from '../components/Matches'
-import Ranking from '../components/Ranking'
+import Layout from '../components/layout/Layout'
+import Matches from '../components/world/Matches'
+import Ranking from '../components/world/Ranking'
 
 // Context
 import WorldContext from '../context/world/WorldContext'

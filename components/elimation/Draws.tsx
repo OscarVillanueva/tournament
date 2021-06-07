@@ -1,8 +1,8 @@
-import React, { ChangeEvent, FC, useContext, useEffect, useState } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 import { Modal } from '@material-ui/core'
 
 // Context
-import EliminationContext from '../context/elimination/EliminationContext'
+import EliminationContext from '../../context/elimination/EliminationContext'
 
 export interface DrawsProps {
     
