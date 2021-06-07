@@ -62,3 +62,9 @@ export interface Action {
     type: string,
     payload: any
 }
+
+export interface Group {
+    id: string,
+    name: string,
+    players: Player[]
+}
