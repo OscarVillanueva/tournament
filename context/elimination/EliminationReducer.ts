@@ -9,10 +9,7 @@ import {
     SET_MATCHES
 } from "../../types"
 
-type Action = {
-    type: string,
-    payload: any
-}
+import { Action } from "../../models";
 
 const EliminationReducer = ( state: any, action: Action ) : any => {
 

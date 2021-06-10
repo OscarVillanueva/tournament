@@ -2,6 +2,7 @@ import "tailwindcss/tailwind.css"
 import WorldState from '../context/world/WorldState'
 import EliminationState from '../context/elimination/EliminationState'
 import GlobalState from '../context/global/GlobalState'
+import GroupsState from '../context/groups/GroupsState'
 
 function Init({ Component, pageProps }) {
   return (
@@ -9,7 +10,9 @@ function Init({ Component, pageProps }) {
     <GlobalState>
       <WorldState>
         <EliminationState>
-          <Component {...pageProps} />
+          <GroupsState>
+            <Component {...pageProps} />
+          </GroupsState>
         </EliminationState>
       </WorldState>
     </GlobalState>
