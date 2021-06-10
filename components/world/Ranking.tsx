@@ -147,8 +147,6 @@ const Ranking: FC<RankingProps> = ({ ranking }) => {
 
                                 </button>
 
-
-
                             </td>
 
                         )}

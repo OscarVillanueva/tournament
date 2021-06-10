@@ -1,5 +1,5 @@
 import { Action } from "../../models";
-import { SET_GROUPS } from "../../types";
+import { FETCH_PLAYERS, SET_GROUPS } from "../../types";
 
 const GroupsReducer = ( state: any, action: Action ) : any => {
     

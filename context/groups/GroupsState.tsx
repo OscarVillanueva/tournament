@@ -5,8 +5,17 @@ import shortid from 'shortid'
 import GroupsContext from './GroupsContext'
 import GroupsReducer from './GroupsReducer'
 
+// Modelos
 import { Player, Group } from "../../models";
-import { SET_GROUPS } from '../../types';
+
+// Hooks
+import useLocalStorage from '../../hooks/useLocalStorage'
+
+// Tipos
+import { 
+    FETCH_PLAYERS,
+    SET_GROUPS 
+} from '../../types';
 
 const GroupsState: FC = ({ children }) => {
 
@@ -16,14 +25,33 @@ const GroupsState: FC = ({ children }) => {
 
     const [ state, dispatch ] = useReducer( GroupsReducer, initialState )
 
+    const { getFromStorage, setIntoStorage, clearStorage } = useLocalStorage( "groups" )
+
+    const fetchRankig = () => {
+        
+        try {
+            
+            const data = getFromStorage( "ranking" )
+
+            dispatch({
+                type: SET_GROUPS,
+                payload: data ? data : []
+            })  
+
+        } catch (error) {
+
+            console.log(error)
+            
+        }
+
+    }
+
     const addPlayer = ( player: Player ) => {
         
         const bridge = [ ...state.groups ]
 
         // Primero buscamos si un grupo esta incompleto
         const group = bridge.findIndex( ( g: Group ) => g.players.length < 4 )
-
-        console.log(`group`, group)
 
         if( group >= 0) bridge[ group ].players.push( player )
 
@@ -33,7 +61,7 @@ const GroupsState: FC = ({ children }) => {
             const newGroup: Group = {
                 id: shortid.generate(),
                 name: `Grupo ${ bridge.length + 1 }`,
-                players: [ player ]
+                players: [ { ...player, id: shortid.generate() } ]
             }
 
             bridge.push( newGroup )
@@ -41,6 +69,8 @@ const GroupsState: FC = ({ children }) => {
         }
 
         // Agregamos al state y al storage
+        setIntoStorage( "ranking", bridge )
+
         dispatch({
             type: SET_GROUPS,
             payload: bridge
@@ -53,7 +83,8 @@ const GroupsState: FC = ({ children }) => {
         <GroupsContext.Provider
             value = {{
                 groups: state.groups,
-                addPlayer
+                addPlayer,
+                fetchRankig
             }}
         >
 

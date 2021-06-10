@@ -5,14 +5,16 @@ import { Group, Player } from "../../models";
 
 type GroupsContent = {
 
-    groups: Group[],
+    groups: Group[]
     addPlayer: (player: Player) => void
+    fetchRankig: () => void
 
 }
 
 const GroupsContext = createContext<GroupsContent>({
     groups: [],
-    addPlayer: () => {}
+    addPlayer: () => {},
+    fetchRankig: () => {}
 })
 
 export default GroupsContext
