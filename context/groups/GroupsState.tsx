@@ -13,6 +13,7 @@ import useLocalStorage from '../../hooks/useLocalStorage'
 
 // Tipos
 import { 
+    CLEAR_STATE,
     FETCH_PLAYERS,
     SET_GROUPS 
 } from '../../types';
@@ -53,7 +54,12 @@ const GroupsState: FC = ({ children }) => {
         // Primero buscamos si un grupo esta incompleto
         const group = bridge.findIndex( ( g: Group ) => g.players.length < 4 )
 
-        if( group >= 0) bridge[ group ].players.push( player )
+        const newPlayer = {
+            ...player,
+            id: shortid.generate() 
+        }
+
+        if( group >= 0) bridge[ group ].players.push( newPlayer )
 
         else {
 
@@ -61,7 +67,7 @@ const GroupsState: FC = ({ children }) => {
             const newGroup: Group = {
                 id: shortid.generate(),
                 name: `Grupo ${ bridge.length + 1 }`,
-                players: [ { ...player, id: shortid.generate() } ]
+                players: [ newPlayer ]
             }
 
             bridge.push( newGroup )
@@ -78,13 +84,25 @@ const GroupsState: FC = ({ children }) => {
 
     }
 
+    const deleteTournament = () => {
+        
+        clearStorage([ "ranking", "matches" ])
+
+        dispatch({
+            type: CLEAR_STATE,
+            payload: null
+        })
+
+    }
+
     return ( 
 
         <GroupsContext.Provider
             value = {{
                 groups: state.groups,
                 addPlayer,
-                fetchRankig
+                fetchRankig,
+                deleteTournament
             }}
         >
 

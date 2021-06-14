@@ -9,10 +9,11 @@ import GroupsContext from '../context/groups/GroupsContext'
 // Components
 import Layout from '../components/layout/Layout'
 import GroupList from '../components/groups/GroupList';
+import Swal from 'sweetalert2';
  
 const Groups: FC = () => {
 
-    const { addPlayer, fetchRankig } = useContext( GroupsContext )
+    const { addPlayer, fetchRankig, deleteTournament } = useContext( GroupsContext )
 
     useEffect(() => {
         
@@ -20,9 +21,31 @@ const Groups: FC = () => {
 
     }, [])
 
+    const cancelTournament = async () => {
+        
+        const result = await Swal.fire({
+            title: "¿Estás seguro?",
+            icon: 'warning',
+            text: "Esta acción no se puede deshacer",
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Aceptar'
+        })
+
+        if( result.isConfirmed ) {
+
+            deleteTournament()
+            // changeTournamentStatus( true )
+
+        }
+
+    }
+
     return ( 
         <Layout
             addAction = { (item: Player) => addPlayer( item ) }
+            cancelTournament = { cancelTournament }
         >
             
             <GroupList />

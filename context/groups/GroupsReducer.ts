@@ -1,5 +1,5 @@
 import { Action } from "../../models";
-import { FETCH_PLAYERS, SET_GROUPS } from "../../types";
+import { CLEAR_STATE, FETCH_PLAYERS, SET_GROUPS } from "../../types";
 
 const GroupsReducer = ( state: any, action: Action ) : any => {
     
@@ -9,6 +9,12 @@ const GroupsReducer = ( state: any, action: Action ) : any => {
             return {
                 ...state, 
                 groups: action.payload
+            }
+
+        case CLEAR_STATE:
+            return {
+                ...state,
+                groups: []
             }
 
         default: return state

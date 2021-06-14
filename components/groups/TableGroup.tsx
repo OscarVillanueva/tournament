@@ -2,14 +2,25 @@ import React, { FC } from 'react'
 
 // Modelos
 import { Group } from '../../models';
+import { Events } from "../../hooks/useDragAndDrop";
 
 export interface TableGroupProps {
     
-    group: Group
+    group: Group,
+    events: Events
 
 }
  
-const TableGroup: FC <TableGroupProps> = ({ group }) => {
+const TableGroup: FC <TableGroupProps> = ({ group, events }) => {
+
+    const { 
+        handleDragStart, 
+        handleDragEnd, 
+        handleDragEnter, 
+        handleDragLeave, 
+        handleDragOver, 
+        handleDrop 
+    } = events
 
     return ( 
 
@@ -58,7 +69,15 @@ const TableGroup: FC <TableGroupProps> = ({ group }) => {
                 
                             <tr
                                 key = { player.id }
+                                id = { player.id }
+                                data-type = { group.name }
                                 draggable
+                                onDragStart = { handleDragStart }
+                                onDragEnd = { handleDragEnd }
+                                onDragEnter = { handleDragEnter }
+                                onDragLeave = { handleDragLeave }
+                                onDragOver = { handleDragOver }
+                                onDrop = { handleDrop }
                             >
                                 <td className = "text-center text-white">
                                     { index + 1 }
