@@ -4,7 +4,7 @@ import React, { FC, useContext } from 'react'
 import GroupsContext from '../../context/groups/GroupsContext'
 
 // Componentes
-import TableGroup from './Group';
+import TableGroup from './TableGroup';
 
 export interface GroupListProps {
     
