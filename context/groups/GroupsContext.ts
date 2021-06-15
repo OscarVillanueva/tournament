@@ -11,6 +11,7 @@ type GroupsContent = {
     fetchRankig: () => void
     deleteTournament: () => void
     exchangePlayers: (source: DragElement, dest: DragElement) => void
+    deletePlayer: (id: string, group: string) => void
 
 }
 
@@ -19,7 +20,8 @@ const GroupsContext = createContext<GroupsContent>({
     addPlayer: () => {},
     fetchRankig: () => {},
     deleteTournament: () => {},
-    exchangePlayers: (source: DragElement, dest: DragElement) => {}
+    exchangePlayers: (source: DragElement, dest: DragElement) => {},
+    deletePlayer: (id: string, group: string) => {}
 })
 
 export default GroupsContext

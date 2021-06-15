@@ -134,6 +134,30 @@ const GroupsState: FC = ({ children }) => {
 
     }
 
+    const deletePlayer = (id: string, group: string) => {
+        
+        // Identificamos el grupo
+        const groupIndex = state.groups.findIndex( ( g: Group ) => g.name === group )
+
+        // Eliminamos al jugador
+        const newPlayers = state.groups[ groupIndex ].players.filter(
+            ( player: Player ) => player.id !== id 
+        )
+
+        // Actualizamos el state
+        const bridge = [ ...state.groups ]
+        bridge[ groupIndex ].players = newPlayers
+
+        // Agregamos al state y al storage
+        setIntoStorage( "ranking", bridge )
+
+        dispatch({
+            type: SET_GROUPS,
+            payload: bridge
+        })
+
+    }
+
     return ( 
 
         <GroupsContext.Provider
@@ -142,7 +166,8 @@ const GroupsState: FC = ({ children }) => {
                 addPlayer,
                 fetchRankig,
                 deleteTournament,
-                exchangePlayers
+                exchangePlayers,
+                deletePlayer
             }}
         >
 
