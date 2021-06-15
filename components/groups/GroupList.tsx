@@ -1,5 +1,8 @@
 import React, { FC, useContext } from 'react'
 
+// Models
+import useDragAndDrop from "../../hooks/useDragAndDrop";
+
 // Context
 import GroupsContext from '../../context/groups/GroupsContext'
 
@@ -7,12 +10,24 @@ import GroupsContext from '../../context/groups/GroupsContext'
 import TableGroup from './TableGroup';
 
 export interface GroupListProps {
-    
 }
  
 const GroupList: FC<GroupListProps> = () => {
 
-    const { groups } = useContext( GroupsContext )
+    const { groups, exchangePlayers } = useContext( GroupsContext )
+
+    const { dragDstEl, dragSrcEl, events } = useDragAndDrop({
+        startCallback: () => {},
+        endCallback: () => {},
+        dropCallback: handleActionOnDrop
+    })
+
+    function handleActionOnDrop() {
+        
+        if( dragDstEl.stage !== dragSrcEl.stage )
+            exchangePlayers( dragSrcEl, dragDstEl )
+
+    }
 
     return ( 
 
@@ -29,6 +44,7 @@ const GroupList: FC<GroupListProps> = () => {
                 {groups.map( group => (
             
                     <TableGroup
+                        events = { events }
                         key = { group.id }
                         group = { group }
                     />

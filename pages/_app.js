@@ -1,4 +1,5 @@
 import "tailwindcss/tailwind.css"
+import "../styles/app.css"
 import WorldState from '../context/world/WorldState'
 import EliminationState from '../context/elimination/EliminationState'
 import GlobalState from '../context/global/GlobalState'
