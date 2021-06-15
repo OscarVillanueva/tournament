@@ -7,6 +7,7 @@ import GroupsReducer from './GroupsReducer'
 
 // Modelos
 import { Player, Group } from "../../models";
+import { DragElement } from '../../hooks/useDragAndDrop'
 
 // Hooks
 import useLocalStorage from '../../hooks/useLocalStorage'
@@ -95,6 +96,44 @@ const GroupsState: FC = ({ children }) => {
 
     }
 
+    const exchangePlayers = ( source: DragElement, dest: DragElement ) => {
+     
+        // Identificamos los grupos
+        const sourceGroup = state.groups.findIndex( ( group: Group ) => group.name === source.stage )
+        const destGroup = state.groups.findIndex( ( group: Group ) => group.name === dest.stage )
+
+        // Sacamos los grupos
+        let playerOfSource = state.groups[ sourceGroup ].players
+        let playerOfDest = state.groups[ destGroup ].players
+
+        // Identificar los jugadores
+        const sourcePlayer = playerOfSource.find( ( player: Player ) => player.id === source.id )
+        const destPlayer = playerOfDest.find( ( player: Player ) => player.id === dest.id )
+        
+        // Intercambiamos
+        playerOfSource = playerOfSource.map( 
+            (player: Player) => player.id !== sourcePlayer.id ? player : destPlayer
+        )
+
+        playerOfDest = playerOfDest.map(
+            (player: Player) => player.id !== destPlayer.id ? player : sourcePlayer
+        )
+        
+        // Actualizamos el state
+        const bridge = [ ...state.groups ]
+        bridge[ sourceGroup ].players = playerOfSource
+        bridge[ destGroup ].players = playerOfDest
+
+        // Agregamos al state y al storage
+        setIntoStorage( "ranking", bridge )
+
+        dispatch({
+            type: SET_GROUPS,
+            payload: bridge
+        })
+
+    }
+
     return ( 
 
         <GroupsContext.Provider
@@ -102,7 +141,8 @@ const GroupsState: FC = ({ children }) => {
                 groups: state.groups,
                 addPlayer,
                 fetchRankig,
-                deleteTournament
+                deleteTournament,
+                exchangePlayers
             }}
         >
 

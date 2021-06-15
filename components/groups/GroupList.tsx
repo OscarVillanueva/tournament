@@ -14,7 +14,7 @@ export interface GroupListProps {
  
 const GroupList: FC<GroupListProps> = () => {
 
-    const { groups } = useContext( GroupsContext )
+    const { groups, exchangePlayers } = useContext( GroupsContext )
 
     const { dragDstEl, dragSrcEl, events } = useDragAndDrop({
         startCallback: () => {},
@@ -24,9 +24,8 @@ const GroupList: FC<GroupListProps> = () => {
 
     function handleActionOnDrop() {
         
-        console.log("termine del drop")
-        console.log(`dragSrcEl`, dragSrcEl)
-        console.log(`dragDstEl`, dragDstEl)
+        if( dragDstEl.stage !== dragSrcEl.stage )
+            exchangePlayers( dragSrcEl, dragDstEl )
 
     }
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-type DragElement = {
+export type DragElement = {
     id: string,
     stage: string
 }
@@ -69,17 +69,27 @@ const useDragAndDrop = ( config: Configuration ) : ToolBox => {
 
     const handleDragEnter = e => {
         
-        e.target.classList.add("over")
+        let target = e.target
+
+        while( !target.getAttribute( "id" ) )
+            target = target.parentElement
+
+        target.classList.add("over")
 
         setDragDstEl({ 
-            id: e.target.getAttribute( "id" ),
-            stage: e.target.getAttribute( "data-type" )
+            id: target.getAttribute( "id" ),
+            stage: target.getAttribute( "data-type" )
         })
     }
 
     const handleDragLeave = e => {
         
-        e.target.classList.remove("over")
+        let target = e.target
+
+        while( !target.getAttribute( "id" ) )
+            target = target.parentElement
+
+        target.classList.remove("over")
 
     }
 
