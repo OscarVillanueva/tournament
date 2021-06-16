@@ -1,12 +1,13 @@
 import React, { FC, useReducer } from 'react'
 import shortid from 'shortid'
+import _ from 'lodash'
 
 // Context y Reducer
 import GroupsContext from './GroupsContext'
 import GroupsReducer from './GroupsReducer'
 
 // Modelos
-import { Player, Group } from "../../models";
+import { Player, Group, Match, Stage } from "../../models";
 import { DragElement } from '../../hooks/useDragAndDrop'
 
 // Hooks
@@ -15,14 +16,15 @@ import useLocalStorage from '../../hooks/useLocalStorage'
 // Tipos
 import { 
     CLEAR_STATE,
-    FETCH_PLAYERS,
-    SET_GROUPS 
+    SET_GROUPS, 
+    SET_MATCHES
 } from '../../types';
 
 const GroupsState: FC = ({ children }) => {
 
     const initialState = {
-        groups: []
+        groups: [],
+        matches: []
     }
 
     const [ state, dispatch ] = useReducer( GroupsReducer, initialState )
@@ -37,6 +39,25 @@ const GroupsState: FC = ({ children }) => {
 
             dispatch({
                 type: SET_GROUPS,
+                payload: data ? data : []
+            })  
+
+        } catch (error) {
+
+            console.log(error)
+            
+        }
+
+    }
+
+    const fetchMatches = () => {
+        
+        try {
+            
+            const data = getFromStorage( "matches" )
+
+            dispatch({
+                type: SET_MATCHES,
                 payload: data ? data : []
             })  
 
@@ -158,16 +179,146 @@ const GroupsState: FC = ({ children }) => {
 
     }
 
+    const startTournament = () => {
+        
+        let matches = []
+
+        state.groups.forEach( ( group: Group ) => {
+            
+            matches = matches.concat( generateMatches( [ ...group.players ], group.name ) )
+
+        })
+
+        // Ordenamos por rondas
+        matches = _.sortBy( matches, "round" )
+
+        // Agregamos al state y al storage
+        setIntoStorage( "matches", matches )
+
+        dispatch({
+            type: SET_MATCHES,
+            payload: matches
+        })
+
+    }
+
+    const generateMatches = ( shuffledRanking: Array<Player>, group: String ) : Array< Match > => {
+        
+        const rounds = shuffledRanking.length - 1
+        const middle = shuffledRanking.length / 2 
+        const matches: Match[] = []
+
+        const leftPart = shuffledRanking.splice( 0, middle )
+        const rightPart = [ ...shuffledRanking.reverse() ]
+
+        for (let index = 0; index < rounds; index++) {
+            
+            
+            for (let pointer = 0; pointer < leftPart.length; pointer++) {
+                
+                matches.push({
+                    id: shortid.generate(),
+                    home: leftPart[pointer],
+                    visitor: rightPart[pointer],
+                    round: `Ronda ${index + 1} - ${ group }`,
+                    closed: false,
+                    stage: Stage.regular
+                })
+                
+            }
+
+            const lastLeftPart = leftPart.splice( ( leftPart.length - 1), 1 )[0]
+            rightPart.push( lastLeftPart )
+
+            const firstRightPart = rightPart.shift()
+            leftPart.splice( 1, 0, firstRightPart)
+
+        }        
+
+        return matches
+
+    }
+
+    const closeMatch = ( match: Match ) => {
+        
+        // buscar el match y cambiarlo
+        let matches = [ ...state.matches ]
+        matches = matches.map( ( m: Match ) => m.id !== match.id ? m : match )
+        matches.push( matches.shift() )
+
+        // Modificar tabla del grupo
+        if( match.stage === Stage.regular ) {
+
+            // Identificar el grupo
+            const groupName = match.round.split("-")[1].trim()
+            const groupIndex = state.groups.findIndex( ( g: Group ) => g.name === groupName ) 
+
+            // Buscar al jugador y actulizarlo
+            let players: Player[] = [ ...state.groups[ groupIndex ].players ]
+
+            players = players.map( ( player: Player ) => {
+    
+                let bridge : Player = null
+    
+                if( player.id === match.home.id ) bridge = match.home
+    
+                if( player.id === match.visitor.id ) bridge = match.visitor
+    
+                if ( bridge ){
+    
+                    player.defeats = player.defeats + bridge.defeats
+                    player.score = player.score + bridge.diff
+                    player.victories = player.victories + bridge.victories
+    
+                    return player
+    
+                }
+                else return player
+    
+            })
+
+            // Reordenar el grupo
+            players.sort( ( a: Player, b: Player ) => 
+                b.victories !== a.victories ? b.victories - a.victories : 
+                b.score !== a.score ? b.score - a.score : b.defeats - a.defeats
+            )
+
+            const groups = [ ...state.groups ]
+            groups[ groupIndex ].players = players
+
+            // Agregamos al state y al storage
+            setIntoStorage( "ranking", groups )
+
+            dispatch({
+                type: SET_GROUPS,
+                payload: groups
+            })
+
+        }
+
+        // Actualizar y Guardar el state 
+        setIntoStorage( "matches", matches )
+
+        dispatch({
+            type: SET_MATCHES,
+            payload: matches
+        })
+    }
+
     return ( 
 
         <GroupsContext.Provider
             value = {{
                 groups: state.groups,
+                matches: state.matches,
                 addPlayer,
+                fetchMatches,
                 fetchRankig,
                 deleteTournament,
                 exchangePlayers,
-                deletePlayer
+                deletePlayer,
+                startTournament,
+                closeMatch
             }}
         >
 

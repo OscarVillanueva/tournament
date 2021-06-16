@@ -5,19 +5,23 @@ import { Player } from "../models";
 
 // Context
 import GroupsContext from '../context/groups/GroupsContext'
+import GlobalContext from '../context/global/GlobalContext'
 
 // Components
 import Layout from '../components/layout/Layout'
 import GroupList from '../components/groups/GroupList';
 import Swal from 'sweetalert2';
+import GroupMatchList from '../components/groups/GroupMatchList';
  
 const Groups: FC = () => {
 
-    const { addPlayer, fetchRankig, deleteTournament } = useContext( GroupsContext )
+    const { matches, addPlayer, fetchRankig, fetchMatches, deleteTournament } = useContext( GroupsContext )
+    const { changeTournamentStatus } = useContext( GlobalContext )
 
     useEffect(() => {
         
         fetchRankig()
+        fetchMatches()
 
     }, [])
 
@@ -36,7 +40,7 @@ const Groups: FC = () => {
         if( result.isConfirmed ) {
 
             deleteTournament()
-            // changeTournamentStatus( true )
+            changeTournamentStatus( true )
 
         }
 
@@ -48,25 +52,30 @@ const Groups: FC = () => {
             cancelTournament = { cancelTournament }
         >
             
-            <GroupList />
 
-            {/* 
-            
-            <div className="md:grid md:grid-cols-2 mt-8 gap-8 w-11/12 mx-auto md:w-full">
+            { matches.length === 0 ? (
 
-                <div>
+                <GroupList />
 
-                    <p> Partidos </p>
+            ) : (
 
-                </div>
-                
-                <div>
+                <div className="md:grid md:grid-cols-2 pt-8 gap-8 w-11/12 mx-auto md:w-full">
 
-                    <p> Grupos </p>
+                    <div>
 
-                </div>
+                        <GroupMatchList />
 
-            </div> */}
+                    </div>
+                    
+                    <div>
+
+                        <GroupList />
+
+                    </div>
+
+                </div> 
+
+            )}
 
         </Layout>
     );

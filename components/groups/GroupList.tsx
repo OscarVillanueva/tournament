@@ -1,20 +1,43 @@
-import React, { FC, useContext } from 'react'
+import React, { FC, useContext, useState, useEffect } from 'react'
 
 // Models
 import useDragAndDrop from "../../hooks/useDragAndDrop";
 
 // Context
 import GroupsContext from '../../context/groups/GroupsContext'
+import GlobalContext from '../../context/global/GlobalContext'
 
 // Componentes
 import TableGroup from './TableGroup';
+import { Group } from '../../models';
 
 export interface GroupListProps {
 }
  
 const GroupList: FC<GroupListProps> = () => {
 
-    const { groups, exchangePlayers } = useContext( GroupsContext )
+    const { matches, groups, exchangePlayers, startTournament } = useContext( GroupsContext )
+    const { changeTournamentStatus } = useContext( GlobalContext )
+    const [isAvailableToClose, setIsAvailableToClose] = useState(false)
+
+    useEffect(() => {    
+    
+        if( groups.length >= 2 && groups.every( ( g: Group ) => g.players.length === 4 ) 
+            && matches.length === 0) {
+
+            setIsAvailableToClose( true )
+            changeTournamentStatus( true )
+            
+        }
+        
+        else {
+
+            changeTournamentStatus( false )
+            setIsAvailableToClose( false )
+
+        }
+
+    }, [groups, matches])
 
     const { dragDstEl, dragSrcEl, events } = useDragAndDrop({
         startCallback: () => {},
@@ -39,7 +62,12 @@ const GroupList: FC<GroupListProps> = () => {
                 Grupos
             </h1> 
 
-            <div className="md:grid md:grid-cols-2 pt-8 gap-8 w-11/12 mx-auto md:w-full">
+            <div 
+                className={
+                    `md:grid ${matches.length === 0 && "md:grid-cols-2"} 
+                    pt-8 gap-8 w-11/12 mx-auto md:w-full`
+                }
+            >
 
                 {groups.map( group => (
             
@@ -52,6 +80,19 @@ const GroupList: FC<GroupListProps> = () => {
                 ))}
 
             </div>
+
+            { isAvailableToClose && (
+
+                <button
+                    className = "text-white text-center text-sm w-full mt-10"
+                    onClick = { startTournament }
+                >
+                    Cerrar torneo / No admitir más jugadores 
+                </button>
+
+            )}
+
+
         </div>
 
     );
