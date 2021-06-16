@@ -1,7 +1,10 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useContext } from 'react'
 
 // Model
-import { Match } from '../../models'
+import { Match, Player } from '../../models'
+
+// Context
+import GroupsContext from '../../context/groups/GroupsContext'
 
 export interface GroupMatchProps {
     round: string, 
@@ -11,9 +14,41 @@ export interface GroupMatchProps {
  
 const GroupMatch: FC<GroupMatchProps> = ({ round, participants, closed }) => {
 
+    const { closeMatch } = useContext( GroupsContext )
+
     const [ homeScore , setHomeScore] = useState( participants.home.score )
     const [ visitorScore , setVisitorScore] = useState( participants.visitor.score )
     const [ matchFinished, setMatchFinished ] = useState( participants.closed )
+
+    const gameFinished = () => {
+
+        const home : Player = {
+            ...participants.home,
+            victories: homeScore > visitorScore ? 1 : 0,
+            defeats: homeScore < visitorScore ? 1 : 0,
+            score: homeScore,
+            diff: homeScore - visitorScore 
+        }
+
+        const visitor : Player = {
+            ...participants.visitor,
+            victories: visitorScore > homeScore ? 1 : 0,
+            defeats: visitorScore < homeScore ? 1 : 0,
+            score: visitorScore,
+            diff: visitorScore - homeScore 
+        }
+
+        setMatchFinished( true )
+
+        closeMatch({
+            ...participants,
+            round,
+            home,
+            visitor,
+            closed: true
+        })
+
+    }
 
     const renderScoreInput = (score: number, id: string, handleChange: Function) => {
         
@@ -102,7 +137,7 @@ const GroupMatch: FC<GroupMatchProps> = ({ round, participants, closed }) => {
 
                 <button
                     className = "bg-yellow-700 transition delay-75 duration-300 ease-in-out delay hover:bg-yellow-800 text-gray-200 py-2 px-4 rounded text-center my-4 md:mb-0 w-full mt-4"
-                    // onClick = { gameFinished }
+                    onClick = { gameFinished }
                 >
                     Finalizar
                 </button>

@@ -5,6 +5,7 @@ import { Player } from "../models";
 
 // Context
 import GroupsContext from '../context/groups/GroupsContext'
+import GlobalContext from '../context/global/GlobalContext'
 
 // Components
 import Layout from '../components/layout/Layout'
@@ -14,11 +15,13 @@ import GroupMatchList from '../components/groups/GroupMatchList';
  
 const Groups: FC = () => {
 
-    const { matches, addPlayer, fetchRankig, deleteTournament } = useContext( GroupsContext )
+    const { matches, addPlayer, fetchRankig, fetchMatches, deleteTournament } = useContext( GroupsContext )
+    const { changeTournamentStatus } = useContext( GlobalContext )
 
     useEffect(() => {
         
         fetchRankig()
+        fetchMatches()
 
     }, [])
 
@@ -37,7 +40,7 @@ const Groups: FC = () => {
         if( result.isConfirmed ) {
 
             deleteTournament()
-            // changeTournamentStatus( true )
+            changeTournamentStatus( true )
 
         }
 

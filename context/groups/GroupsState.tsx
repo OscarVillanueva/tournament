@@ -50,6 +50,25 @@ const GroupsState: FC = ({ children }) => {
 
     }
 
+    const fetchMatches = () => {
+        
+        try {
+            
+            const data = getFromStorage( "matches" )
+
+            dispatch({
+                type: SET_MATCHES,
+                payload: data ? data : []
+            })  
+
+        } catch (error) {
+
+            console.log(error)
+            
+        }
+
+    }
+
     const addPlayer = ( player: Player ) => {
         
         const bridge = [ ...state.groups ]
@@ -220,6 +239,72 @@ const GroupsState: FC = ({ children }) => {
 
     }
 
+    const closeMatch = ( match: Match ) => {
+        
+        // buscar el match y cambiarlo
+        let matches = [ ...state.matches ]
+        matches = matches.map( ( m: Match ) => m.id !== match.id ? m : match )
+        matches.push( matches.shift() )
+
+        // Modificar tabla del grupo
+        if( match.stage === Stage.regular ) {
+
+            // Identificar el grupo
+            const groupName = match.round.split("-")[1].trim()
+            const groupIndex = state.groups.findIndex( ( g: Group ) => g.name === groupName ) 
+
+            // Buscar al jugador y actulizarlo
+            let players: Player[] = [ ...state.groups[ groupIndex ].players ]
+
+            players = players.map( ( player: Player ) => {
+    
+                let bridge : Player = null
+    
+                if( player.id === match.home.id ) bridge = match.home
+    
+                if( player.id === match.visitor.id ) bridge = match.visitor
+    
+                if ( bridge ){
+    
+                    player.defeats = player.defeats + bridge.defeats
+                    player.score = player.score + bridge.diff
+                    player.victories = player.victories + bridge.victories
+    
+                    return player
+    
+                }
+                else return player
+    
+            })
+
+            // Reordenar el grupo
+            players.sort( ( a: Player, b: Player ) => 
+                b.victories !== a.victories ? b.victories - a.victories : 
+                b.score !== a.score ? b.score - a.score : b.defeats - a.defeats
+            )
+
+            const groups = [ ...state.groups ]
+            groups[ groupIndex ].players = players
+
+            // Agregamos al state y al storage
+            setIntoStorage( "ranking", groups )
+
+            dispatch({
+                type: SET_GROUPS,
+                payload: groups
+            })
+
+        }
+
+        // Actualizar y Guardar el state 
+        setIntoStorage( "matches", matches )
+
+        dispatch({
+            type: SET_MATCHES,
+            payload: matches
+        })
+    }
+
     return ( 
 
         <GroupsContext.Provider
@@ -227,11 +312,13 @@ const GroupsState: FC = ({ children }) => {
                 groups: state.groups,
                 matches: state.matches,
                 addPlayer,
+                fetchMatches,
                 fetchRankig,
                 deleteTournament,
                 exchangePlayers,
                 deletePlayer,
-                startTournament
+                startTournament,
+                closeMatch
             }}
         >
 
