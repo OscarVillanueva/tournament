@@ -1,12 +1,13 @@
 import React, { FC, useReducer } from 'react'
 import shortid from 'shortid'
+import _ from 'lodash'
 
 // Context y Reducer
 import GroupsContext from './GroupsContext'
 import GroupsReducer from './GroupsReducer'
 
 // Modelos
-import { Player, Group } from "../../models";
+import { Player, Group, Match, Stage } from "../../models";
 import { DragElement } from '../../hooks/useDragAndDrop'
 
 // Hooks
@@ -15,14 +16,15 @@ import useLocalStorage from '../../hooks/useLocalStorage'
 // Tipos
 import { 
     CLEAR_STATE,
-    FETCH_PLAYERS,
-    SET_GROUPS 
+    SET_GROUPS, 
+    SET_MATCHES
 } from '../../types';
 
 const GroupsState: FC = ({ children }) => {
 
     const initialState = {
-        groups: []
+        groups: [],
+        matches: []
     }
 
     const [ state, dispatch ] = useReducer( GroupsReducer, initialState )
@@ -158,16 +160,78 @@ const GroupsState: FC = ({ children }) => {
 
     }
 
+    const startTournament = () => {
+        
+        let matches = []
+
+        state.groups.forEach( ( group: Group ) => {
+            
+            matches = matches.concat( generateMatches( [ ...group.players ], group.name ) )
+
+        })
+
+        // Ordenamos por rondas
+        matches = _.sortBy( matches, "round" )
+
+        // Agregamos al state y al storage
+        // setIntoStorage( "matches", matches )
+
+        dispatch({
+            type: SET_MATCHES,
+            payload: matches
+        })
+
+    }
+
+    const generateMatches = ( shuffledRanking: Array<Player>, group: String ) : Array< Match > => {
+        
+        const rounds = shuffledRanking.length - 1
+        const middle = shuffledRanking.length / 2 
+        const matches: Match[] = []
+
+        const leftPart = shuffledRanking.splice( 0, middle )
+        const rightPart = [ ...shuffledRanking.reverse() ]
+
+        for (let index = 0; index < rounds; index++) {
+            
+            
+            for (let pointer = 0; pointer < leftPart.length; pointer++) {
+                
+                matches.push({
+                    id: shortid.generate(),
+                    home: leftPart[pointer],
+                    visitor: rightPart[pointer],
+                    round: `Ronda ${index + 1} - ${ group }`,
+                    closed: false,
+                    stage: Stage.regular
+                })
+                
+            }
+
+            const lastLeftPart = leftPart.splice( ( leftPart.length - 1), 1 )[0]
+            rightPart.push( lastLeftPart )
+
+            const firstRightPart = rightPart.shift()
+            leftPart.splice( 1, 0, firstRightPart)
+
+        }        
+
+        return matches
+
+    }
+
     return ( 
 
         <GroupsContext.Provider
             value = {{
                 groups: state.groups,
+                matches: state.matches,
                 addPlayer,
                 fetchRankig,
                 deleteTournament,
                 exchangePlayers,
-                deletePlayer
+                deletePlayer,
+                startTournament
             }}
         >
 

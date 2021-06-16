@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import React, { FC, useContext, useState, useEffect } from 'react'
 
 // Models
 import useDragAndDrop from "../../hooks/useDragAndDrop";
@@ -8,13 +8,24 @@ import GroupsContext from '../../context/groups/GroupsContext'
 
 // Componentes
 import TableGroup from './TableGroup';
+import { Group } from '../../models';
 
 export interface GroupListProps {
 }
  
 const GroupList: FC<GroupListProps> = () => {
 
-    const { groups, exchangePlayers } = useContext( GroupsContext )
+    const { groups, exchangePlayers, startTournament } = useContext( GroupsContext )
+    const [isAvailableToClose, setIsAvailableToClose] = useState(false)
+
+    useEffect(() => {
+        
+        if( groups.length >= 2 && groups.every( ( g: Group ) => g.players.length === 4 ))
+            setIsAvailableToClose( true )
+
+        else setIsAvailableToClose( false )
+
+    }, [groups])
 
     const { dragDstEl, dragSrcEl, events } = useDragAndDrop({
         startCallback: () => {},
@@ -52,6 +63,19 @@ const GroupList: FC<GroupListProps> = () => {
                 ))}
 
             </div>
+
+            { isAvailableToClose && (
+
+                <button
+                    className = "text-white text-center text-sm w-full mt-10"
+                    onClick = { startTournament }
+                >
+                    Cerrar torneo / No admitir más jugadores 
+                </button>
+
+            )}
+
+
         </div>
 
     );
