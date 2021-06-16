@@ -174,7 +174,7 @@ const GroupsState: FC = ({ children }) => {
         matches = _.sortBy( matches, "round" )
 
         // Agregamos al state y al storage
-        // setIntoStorage( "matches", matches )
+        setIntoStorage( "matches", matches )
 
         dispatch({
             type: SET_MATCHES,
