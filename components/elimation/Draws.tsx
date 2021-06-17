@@ -7,7 +7,10 @@ import { Modal } from '@material-ui/core'
 import EliminationContext from '../../context/elimination/EliminationContext'
 import GlobalContext from '../../context/global/GlobalContext'
 
- 
+declare global {
+    interface Window { bracketsViewer: any }
+}
+
 const Draws: FC = () => {
 
     const {  ranking, matches, config, updateScore } = useContext( EliminationContext )
@@ -38,7 +41,7 @@ const Draws: FC = () => {
             const example = document.querySelector('#example')
             example.innerHTML = ""
 
-            bracketsViewer.render({
+            window.bracketsViewer.render({
                 stages: [ config ],
                 matches: matches,
                 matchGames: [],
