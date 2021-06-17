@@ -111,23 +111,33 @@ const TableGroup: FC <TableGroupProps> = ({ group, events }) => {
                                 onDragOver = { handleDragOver }
                                 onDrop = { handleDrop }
                             >
-                                <td className = "text-center text-white">
+                                <td className = {`text-center 
+                                    ${ !player.tournament_id ? "text-white" : "text-yellow-400"}`}
+                                >
                                     { index + 1 }
                                 </td>
 
-                                <td className = "text-center text-white">
+                                <td className = {`text-center 
+                                    ${ !player.tournament_id ? "text-white" : "text-yellow-400"}`}
+                                >
                                     { player.name }
                                 </td>
 
-                                <td className = "text-center text-white">
+                                <td className = {`text-center 
+                                    ${ !player.tournament_id ? "text-white" : "text-yellow-400"}`}
+                                >
                                     { player.victories }
                                 </td>
 
-                                <td className = "text-center text-white">
+                                <td className = {`text-center 
+                                    ${ !player.tournament_id ? "text-white" : "text-yellow-400"}`}
+                                >
                                     { player.defeats }
                                 </td>
 
-                                <td className = "text-center text-white">
+                                <td className = {`text-center 
+                                    ${ !player.tournament_id ? "text-white" : "text-yellow-400"}`}
+                                >
                                     { player.score }
                                 </td>
 

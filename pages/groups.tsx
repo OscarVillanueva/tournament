@@ -25,6 +25,14 @@ const Groups: FC = () => {
 
     }, [])
 
+    useEffect(() => {
+        
+        if( matches.length === 0 ) changeTournamentStatus( true )
+
+        else changeTournamentStatus( false )
+
+    }, [matches])
+
     const cancelTournament = async () => {
         
         const result = await Swal.fire({

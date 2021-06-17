@@ -19,7 +19,8 @@ const GroupsReducer = ( state: any, action: Action ) : any => {
         case CLEAR_STATE:
             return {
                 ...state,
-                groups: []
+                groups: [],
+                matches: []
             }
 
         case SET_MATCHES:

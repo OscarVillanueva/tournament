@@ -26,13 +26,11 @@ const GroupList: FC<GroupListProps> = () => {
             && matches.length === 0) {
 
             setIsAvailableToClose( true )
-            changeTournamentStatus( true )
             
         }
         
         else {
 
-            changeTournamentStatus( false )
             setIsAvailableToClose( false )
 
         }

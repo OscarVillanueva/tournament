@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import React, { FC, useContext, useEffect } from 'react'
 
 // Models
 import { Match } from '../../models'
@@ -11,7 +11,18 @@ import GroupMatch from '../../components/groups/GroupMatch'
  
 const GroupMatchList: FC = () => {
 
-    const { matches } = useContext( GroupsContext )
+    const { matches, eliminationRound } = useContext( GroupsContext )
+
+    useEffect(() => {
+        
+        if( !matches.some( (match: Match) => !match.closed ) ) {
+
+            eliminationRound()
+            console.log(`entre`)
+
+        }
+
+    }, [matches])
 
     return ( 
 
