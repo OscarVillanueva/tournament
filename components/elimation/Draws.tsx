@@ -1,4 +1,6 @@
 import React, { FC, useContext, useEffect, useState } from 'react'
+// import "brackets-viewer/dist/brackets-viewer.min.js"
+// import "brackets-viewer/dist/brackets-viewer.min.css"
 import { Modal } from '@material-ui/core'
 
 // Context
@@ -36,7 +38,7 @@ const Draws: FC = () => {
             const example = document.querySelector('#example')
             example.innerHTML = ""
 
-            window.bracketsViewer.render({
+            bracketsViewer.render({
                 stages: [ config ],
                 matches: matches,
                 matchGames: [],
