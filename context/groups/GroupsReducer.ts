@@ -3,7 +3,8 @@ import {
     CLEAR_STATE, 
     FETCH_PLAYERS, 
     SET_GROUPS, 
-    SET_MATCHES 
+    SET_MATCHES, 
+    SET_NEXT_ROUND_INDEX
 } from "../../types";
 
 const GroupsReducer = ( state: any, action: Action ) : any => {
@@ -19,13 +20,20 @@ const GroupsReducer = ( state: any, action: Action ) : any => {
         case CLEAR_STATE:
             return {
                 ...state,
-                groups: []
+                groups: [],
+                matches: []
             }
 
         case SET_MATCHES:
             return {
                 ...state,
                 matches: action.payload
+            }
+
+        case SET_NEXT_ROUND_INDEX: 
+            return {
+                ...state,
+                nextRoundIndex: action.payload
             }
 
         default: return state

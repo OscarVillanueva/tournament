@@ -17,14 +17,16 @@ import useLocalStorage from '../../hooks/useLocalStorage'
 import { 
     CLEAR_STATE,
     SET_GROUPS, 
-    SET_MATCHES
+    SET_MATCHES,
+    SET_NEXT_ROUND_INDEX
 } from '../../types';
 
 const GroupsState: FC = ({ children }) => {
 
     const initialState = {
         groups: [],
-        matches: []
+        matches: [],
+        nextRoundIndex: 0
     }
 
     const [ state, dispatch ] = useReducer( GroupsReducer, initialState )
@@ -287,7 +289,7 @@ const GroupsState: FC = ({ children }) => {
             groups[ groupIndex ].players = players
 
             // Agregamos al state y al storage
-            setIntoStorage( "ranking", groups )
+            // setIntoStorage( "ranking", groups )
 
             dispatch({
                 type: SET_GROUPS,
@@ -297,7 +299,7 @@ const GroupsState: FC = ({ children }) => {
         }
 
         // Actualizar y Guardar el state 
-        setIntoStorage( "matches", matches )
+        // setIntoStorage( "matches", matches )
 
         dispatch({
             type: SET_MATCHES,
@@ -305,12 +307,172 @@ const GroupsState: FC = ({ children }) => {
         })
     }
 
+    const eliminationRound = () => {
+        
+        // Sacamos a los jugadores, los primeros lugares, completamos con los segundos y terceros
+        const players = getPlayersForEliminationRound()
+
+        // Marcamos los jugadores que pasaron a la siguiente ronda
+        selectNextStagePlayer( players )
+        
+        // Generarmos partidos de eliminación directa primero contra ultimo . . .
+        const newMatches = generateMatchesForNextRound( players )
+
+        // Guardamos y actualizamos el state
+        // setIntoStorage( "matches",  newMatches)
+
+        dispatch({
+            type: SET_MATCHES,
+            payload: newMatches
+        })
+    }
+
+    const getNextRound = () => {
+        
+        // Sacamos los partidos de la ronda anterior
+        const matches = [ ...state.matches ]
+        const pos = state.matches.length - state.nextRoundIndex
+        const semis = matches.splice( pos, matches.length)
+
+        const semisMatches = semis.filter( (match: Match) => match.stage === Stage.semis )
+
+        const challengers: Player[] = []   
+        
+        semisMatches.forEach(( match: Match ) => {
+            
+            if( match.home.score > match.visitor.score ) 
+                challengers.push({ 
+                    ...match.home,
+                    score: 0
+                })
+
+            else 
+                challengers.push({ 
+                    ...match.visitor,
+                    score: 0
+                })
+
+        })
+
+        // Generarmos partidos de eliminación directa primero contra ultimo . . .
+        const newMatches = generateMatchesForNextRound( challengers )
+
+        // Guardamos y actualizamos el state
+        // setIntoStorage( "matches",  newMatches)
+
+        dispatch({
+            type: SET_MATCHES,
+            payload: newMatches
+        })
+
+    }
+
+    const generateMatchesForNextRound = ( players: Player[] ): Match[] => {
+        
+        let newMatches: Match[] = []
+
+        for (let index = 0; index <= (players.length - 2); index = index + 2) {
+
+            newMatches.push({
+                id: shortid.generate(),
+                round: players.length === 2 ? "Final" :"Eliminación",
+                home: { ...players[ index ], score: 0},
+                visitor: { ...players[ index + 1], score: 0},
+                closed: false,
+                stage: players.length === 2 ? Stage.final : Stage.semis
+            })
+
+        }
+
+        dispatch({
+            type: SET_NEXT_ROUND_INDEX,
+            payload: newMatches.length
+        })
+
+        newMatches = newMatches.concat( state.matches )
+
+        return newMatches
+
+    }
+
+    const selectNextStagePlayer = ( players: any ) => {
+        
+        let groups = [ ...state.groups ]
+
+        players.forEach(( player: any ) => {
+            
+            groups[ player.group ].players = groups[ player.group ].players.map( 
+                ( p: Player ) => p.id === player.id ? player : p
+            )
+
+        })
+
+        // Actualizamos el state de grupos
+        // setIntoStorage( "ranking", groups )
+        dispatch({
+            type: SET_GROUPS,
+            payload: groups
+        })
+
+    }
+
+    const getPlayersForEliminationRound = () : Player[] => {
+        
+        const groups = [ ...state.groups ]
+
+        // Inicialiazamos el arreglo con los primeros lugares
+        let players: Player[] = groups.map( ( group: Group, index ) => 
+            ({ ...group.players[0], tournament_id: "next", group: index }) 
+        )
+        
+        // Sacar a los mejores segun el index
+        const bridge = groups.map( ( group: Group, index ) => ({ ...group.players[ 1 ], group: index}) )
+
+        // Ordenamos según
+        bridge.sort( ( a: Player, b: Player ) => 
+            b.victories !== a.victories ? b.victories - a.victories : 
+            b.score !== a.score ? b.score - a.score : b.defeats - a.defeats
+        )
+    
+        // Preguntar cuantos faltan y agregar esos
+        const missing = nextPowerOf2( players.length ) - players.length
+        const nextPlayers = bridge.slice( 0, missing ).map( 
+            ( player: Player ) => ({ ...player, tournament_id: "next" }) 
+        )
+
+        players = players.concat( nextPlayers )
+
+        return players
+
+    }
+
+    const nextPowerOf2 = ( n: number ) : number => {
+
+        var count = 0;
+        
+        // First n in the below condition
+        // is for the case where n is 0
+        if (n && !(n & (n - 1)))
+            return n;
+        
+        while( n != 0)
+        {
+            n >>= 1;
+            count += 1;
+        }
+        
+        return 1 << count;
+
+    }
+ 
+
     return ( 
 
         <GroupsContext.Provider
             value = {{
                 groups: state.groups,
                 matches: state.matches,
+                nextRoundIndex: state.nextRoundIndex,
                 addPlayer,
                 fetchMatches,
                 fetchRankig,
@@ -318,7 +480,9 @@ const GroupsState: FC = ({ children }) => {
                 exchangePlayers,
                 deletePlayer,
                 startTournament,
-                closeMatch
+                closeMatch,
+                eliminationRound,
+                getNextRound
             }}
         >
 
