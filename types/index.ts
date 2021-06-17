@@ -18,3 +18,4 @@ export const INIT_TOURNAMENT = "INIT_TOURNAMENT"
 
 // World
 export const SET_GROUPS = "SET_GROUPS"
+export const SET_NEXT_ROUND_INDEX = "SET_NEXT_ROUND_INDEX"
