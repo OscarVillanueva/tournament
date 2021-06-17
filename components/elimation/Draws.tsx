@@ -63,7 +63,7 @@ const Draws: FC = () => {
                 e.addEventListener('click', (e) => {
                     e.preventDefault()
                     
-                    let target = e.target
+                    let target = e.target as HTMLElement
 
                     while( !target.getAttribute( "data-match-id" ) )
                         target = target.parentElement
