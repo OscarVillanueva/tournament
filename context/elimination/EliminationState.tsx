@@ -77,6 +77,8 @@ const EliminationState: FC = ({ children }) => {
         
         try {
             
+            // debugger
+
             const data = getFromStorage( "matches" )
             let count = 0
             let currentRound = 0
@@ -232,6 +234,8 @@ const EliminationState: FC = ({ children }) => {
         
         const matchesOfRound = state.matches.filter( (m: any) => m.round_id === state.currentRound )
         let less = 0
+
+        // debugger
 
         const winners = matchesOfRound.map( (m: any) => {
 

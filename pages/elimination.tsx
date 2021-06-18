@@ -35,9 +35,8 @@ const Elimination: FC = () => {
 
     useEffect(() => {
         
-        if( remainingMatches === 0 ) {
+        if( remainingMatches === 0 && matches.length !== 0) {
             nextRound()
-            console.log(`entre`)
         }
 
     }, [remainingMatches])
